@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { SiblingModel } from '@/model/SiblingModel'
 import { SiblingRepository } from '@/repository/SiblingRepository'
 import { SiblingService } from '@/service/SiblingService'
+import { RoomModel } from '@/model/RoomModel'
+import { StudentModel } from '@/model/StudentModel'
+import sequelize from '@/db/db'
 
 const siblingRepository = new SiblingRepository()
 const siblingService = new SiblingService(siblingRepository)
@@ -10,6 +13,8 @@ export default async function siblingController(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  await sequelize.sync()
+  sequelize.addModels([StudentModel, RoomModel, SiblingModel])
   if (req.method === 'POST') {
     try {
       const { studentId, siblingId } = req.body

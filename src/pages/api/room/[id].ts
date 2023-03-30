@@ -1,9 +1,9 @@
-import roomController from '@/controller/RoomController'
+import roomControllerId from '@/controller/RoomControllerId'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  return roomController(req, res)
+  return roomControllerId(req, res)
 }
