@@ -9,7 +9,7 @@ import { StudentModel } from '@/model/StudentModel'
 const roomRepository = new RoomRepository()
 const roomService = new RoomService(roomRepository)
 
-export default async function roomController(
+export default async function roomController (
   req: NextApiRequest,
   res: NextApiResponse
 ) {

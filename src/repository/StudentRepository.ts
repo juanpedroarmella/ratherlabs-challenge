@@ -3,7 +3,7 @@ import { SiblingModel } from '@/model/SiblingModel'
 import { StudentModel } from '../model/StudentModel'
 
 export class StudentRepository {
-  async create(
+  async create (
     name: string,
     age: number,
     gender: string,
@@ -20,14 +20,14 @@ export class StudentRepository {
     return student
   }
 
-  async findById(id: number): Promise<StudentModel | null> {
+  async findById (id: number): Promise<StudentModel | null> {
     const student = await StudentModel.findByPk(id, {
       include: [RoomModel, SiblingModel]
     })
     return student
   }
 
-  async update(
+  async update (
     id: number,
     name: string,
     age: number,

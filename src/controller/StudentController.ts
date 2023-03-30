@@ -9,7 +9,7 @@ import { SiblingModel } from '@/model/SiblingModel'
 const studentRepository = new StudentRepository()
 const studentService = new StudentService(studentRepository)
 
-export default async function studentController(
+export default async function studentController (
   req: NextApiRequest,
   res: NextApiResponse
 ) {

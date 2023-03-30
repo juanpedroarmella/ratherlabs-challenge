@@ -9,7 +9,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 const roomRepository = new RoomRepository()
 const roomService = new RoomService(roomRepository)
 
-export default async function roomControllerId(
+export default async function roomControllerId (
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -27,7 +27,7 @@ export default async function roomControllerId(
       if (updatedRows === 0) {
         res.status(404).end()
       } else {
-        res.status(200).json({ updatedRows: updatedRows })
+        res.status(200).json({ updatedRows })
       }
     } catch (err) {
       console.error(err)

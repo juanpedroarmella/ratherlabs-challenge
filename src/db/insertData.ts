@@ -7,7 +7,7 @@ export const insertData = async (): Promise<void> => {
     const rooms = await Promise.all(
       Array.from({ length: 10 }).map(async (_, index: number) => {
         const name = `Room ${index + 1}`
-        return RoomModel.create({ name })
+        return await RoomModel.create({ name })
       })
     )
 
@@ -18,7 +18,7 @@ export const insertData = async (): Promise<void> => {
         const gender = Math.floor(Math.random()) === 0 ? 'Male' : 'Female'
         const roomId =
           rooms[Math.floor(Math.random() * rooms.length - 1) + 1].id
-        return StudentModel.create({ name, age, gender, roomId })
+        return await StudentModel.create({ name, age, gender, roomId })
       })
     )
 

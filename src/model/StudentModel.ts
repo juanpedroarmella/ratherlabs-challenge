@@ -17,46 +17,46 @@ export class StudentModel extends Model<StudentModel> {
     autoIncrement: true,
     primaryKey: true
   })
-  id!: number
+    id!: number
 
   @Column({
     type: DataTypes.STRING,
     allowNull: false
   })
-  name!: string
+    name!: string
 
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false
   })
-  age!: number
+    age!: number
 
   @Column({
     type: DataTypes.STRING,
     allowNull: false
   })
-  gender!: string
+    gender!: string
 
   @ForeignKey(() => RoomModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false
   })
-  roomId!: number
+    roomId!: number
 
   @ForeignKey(() => SiblingModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true
   })
-  siblingId?: number
+    siblingId?: number
 
   @BelongsTo(() => RoomModel, 'roomId')
-  room!: typeof RoomModel
+    room!: typeof RoomModel
 
   @HasMany(() => SiblingModel, 'studentId')
-  siblings!: typeof SiblingModel[]
+    siblings!: Array<typeof SiblingModel>
 
   @BelongsTo(() => SiblingModel, 'siblingId')
-  sibling!: typeof SiblingModel
+    sibling!: typeof SiblingModel
 }

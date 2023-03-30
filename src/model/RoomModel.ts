@@ -9,14 +9,14 @@ export class RoomModel extends Model<RoomModel> {
     autoIncrement: true,
     primaryKey: true
   })
-  id!: number
+    id!: number
 
   @Column({
     type: DataTypes.STRING,
     allowNull: false
   })
-  name!: string
+    name!: string
 
   @HasMany(() => StudentModel, 'roomId')
-  students!: typeof StudentModel[]
+    students!: Array<typeof StudentModel>
 }

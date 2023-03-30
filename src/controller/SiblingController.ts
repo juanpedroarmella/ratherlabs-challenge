@@ -9,7 +9,7 @@ import sequelize from '@/db/db'
 const siblingRepository = new SiblingRepository()
 const siblingService = new SiblingService(siblingRepository)
 
-export default async function siblingController(
+export default async function siblingController (
   req: NextApiRequest,
   res: NextApiResponse
 ) {
