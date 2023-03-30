@@ -33,7 +33,7 @@ export default function NewStudent () {
           <option value='room3'>Room 3</option>
         </select>
 
-        <label>Add silbings:</label>
+        <label>Add siblings:</label>
 
         <table style={{ textAlign: 'center' }}>
           <thead>

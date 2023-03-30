@@ -9,7 +9,7 @@ export default function Student () {
       <p>
         Room: <Link href='/room/1'>RoomName</Link>
       </p>
-      <p>Silbings:</p>
+      <p>siblings:</p>
       <ul>
         <li>
           <Link href='/student/1'>Silgbing1</Link>

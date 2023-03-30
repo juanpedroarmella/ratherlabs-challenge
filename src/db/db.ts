@@ -9,7 +9,7 @@ const sequelize = new Sequelize({
   password: process.env.DB_PASSWORD as string,
   host: process.env.DB_HOST,
   dialect: 'mysql',
-  models: [__dirname + '/../models']
+  models: [__dirname + '/../model']
 })
 
 export default sequelize

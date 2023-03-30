@@ -6,27 +6,27 @@ import {
   Table
 } from 'sequelize-typescript'
 import { DataTypes } from 'sequelize'
-import { Student } from './Student'
+import { StudentModel } from './StudentModel'
 
 @Table({ tableName: 'siblings' })
-export class Sibling extends Model<Sibling> {
-  @ForeignKey(() => Student)
+export class SiblingModel extends Model<SiblingModel> {
+  @ForeignKey(() => StudentModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true
   })
   studentId!: number
 
-  @ForeignKey(() => Student)
+  @ForeignKey(() => StudentModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true
   })
   siblingId!: number
 
-  @BelongsTo(() => Student, 'studentId')
-  student!: Student
+  @BelongsTo(() => StudentModel, 'studentId')
+  student!: typeof StudentModel
 
-  @BelongsTo(() => Student, 'siblingId')
-  sibling!: Student
+  @BelongsTo(() => StudentModel, 'siblingId')
+  sibling!: typeof StudentModel
 }

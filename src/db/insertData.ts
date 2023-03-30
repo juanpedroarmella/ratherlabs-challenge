@@ -1,13 +1,13 @@
-import { Room } from '../models/Room'
-import { Sibling } from '../models/Sibling'
-import { Student } from '../models/Student'
+import { RoomModel } from '../model/RoomModel'
+import { SiblingModel } from '../model/SiblingModel'
+import { StudentModel } from '../model/StudentModel'
 
 export const insertData = async (): Promise<void> => {
   try {
     const rooms = await Promise.all(
       Array.from({ length: 10 }).map(async (_, index: number) => {
         const name = `Room ${index + 1}`
-        return Room.create({ name })
+        return RoomModel.create({ name })
       })
     )
 
@@ -18,7 +18,7 @@ export const insertData = async (): Promise<void> => {
         const gender = Math.floor(Math.random()) === 0 ? 'Male' : 'Female'
         const roomId =
           rooms[Math.floor(Math.random() * rooms.length - 1) + 1].id
-        return Student.create({ name, age, gender, roomId })
+        return StudentModel.create({ name, age, gender, roomId })
       })
     )
 
@@ -29,7 +29,10 @@ export const insertData = async (): Promise<void> => {
         const sibling =
           students[Math.floor(Math.random() * students.length - 1) + 1]
         if (student.id !== sibling.id) {
-          await Sibling.create({ studentId: student.id, siblingId: sibling.id })
+          await SiblingModel.create({
+            studentId: student.id,
+            siblingId: sibling.id
+          })
         }
       })
     )

@@ -1,9 +1,9 @@
 import { DataTypes } from 'sequelize'
 import { Model, Table, Column, HasMany } from 'sequelize-typescript'
-import { Student } from './Student'
+import { StudentModel } from './StudentModel'
 
 @Table({ tableName: 'rooms' })
-export class Room extends Model<Room> {
+export class RoomModel extends Model<RoomModel> {
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     autoIncrement: true,
@@ -17,6 +17,6 @@ export class Room extends Model<Room> {
   })
   name!: string
 
-  @HasMany(() => Student, 'roomId')
-  students!: Student[]
+  @HasMany(() => StudentModel, 'roomId')
+  students!: typeof StudentModel[]
 }

@@ -7,11 +7,11 @@ import {
   Table
 } from 'sequelize-typescript'
 import { DataTypes } from 'sequelize'
-import { Room } from './Room'
-import { Sibling } from './Sibling'
+import { RoomModel } from './RoomModel'
+import { SiblingModel } from './SiblingModel'
 
 @Table({ tableName: 'students' })
-export class Student extends Model<Student> {
+export class StudentModel extends Model<StudentModel> {
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     autoIncrement: true,
@@ -37,26 +37,26 @@ export class Student extends Model<Student> {
   })
   gender!: string
 
-  @ForeignKey(() => Room)
+  @ForeignKey(() => RoomModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false
   })
   roomId!: number
 
-  @ForeignKey(() => Sibling)
+  @ForeignKey(() => SiblingModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true
   })
   siblingId?: number
 
-  @BelongsTo(() => Room, 'roomId')
-  room!: Room
+  @BelongsTo(() => RoomModel, 'roomId')
+  room!: typeof RoomModel
 
-  @HasMany(() => Sibling, 'studentId')
-  siblings!: Sibling[]
+  @HasMany(() => SiblingModel, 'studentId')
+  siblings!: typeof SiblingModel[]
 
-  @BelongsTo(() => Sibling, 'siblingId')
-  sibling!: Sibling
+  @BelongsTo(() => SiblingModel, 'siblingId')
+  sibling!: typeof SiblingModel
 }

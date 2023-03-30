@@ -40,7 +40,7 @@ export default function EditStudent () {
           <option value='room3'>Room 3</option>
         </select>
 
-        <label>Silbings settings:</label>
+        <label>siblings settings:</label>
 
         <table style={{ textAlign: 'center' }}>
           <thead>
