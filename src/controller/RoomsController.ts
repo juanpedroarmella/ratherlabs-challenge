@@ -7,7 +7,7 @@ import { RoomModel } from '@/model/RoomModel'
 import { SiblingModel } from '@/model/SiblingModel'
 import { StudentModel } from '@/model/StudentModel'
 
-export default async function roomController (
+export default async function roomsController(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

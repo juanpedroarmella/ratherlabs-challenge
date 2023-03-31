@@ -1,7 +1,6 @@
 import RootContainer from '@/atoms/RootContainer'
 import type { Room } from '@/types/interfaces/Room'
 import Alert from '@mui/material/Alert'
-import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'

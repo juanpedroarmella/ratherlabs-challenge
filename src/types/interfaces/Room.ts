@@ -1,4 +1,3 @@
-import { RoomModel } from '@/model/RoomModel'
 import { Student } from './Student'
 
 export interface Room {
