@@ -1,13 +1,13 @@
+import { StudentRepository } from '@/repository/StudentRepository'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { RoomRepository } from '@/repository/RoomRepository'
+import { RoomService } from '@/service/RoomService'
 import sequelize from '@/db/db'
 import { RoomModel } from '@/model/RoomModel'
 import { SiblingModel } from '@/model/SiblingModel'
 import { StudentModel } from '@/model/StudentModel'
-import { RoomRepository } from '@/repository/RoomRepository'
-import { StudentRepository } from '@/repository/StudentRepository'
-import { RoomService } from '@/service/RoomService'
-import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function roomControllerId (
+export default async function roomController (
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -18,32 +18,22 @@ export default async function roomControllerId (
   const studentRepository = new StudentRepository()
   const roomService = new RoomService(roomRepository, studentRepository)
 
-  if (req.method === 'PUT') {
-    const id = parseInt(req.query.id as string)
+  if (req.method === 'POST') {
     const { name } = req.body
-
     try {
-      const [updatedRows] = await roomService.editRoom(id, name)
-
-      if (updatedRows === 0) {
-        res.status(404).end()
-      } else {
-        res.status(200).json({ updatedRows })
-      }
+      const newRoom = await roomService.createRoom(name)
+      res.status(201).json(newRoom)
     } catch (err) {
+      console.error(err)
       res.status(500).json({ error: 'Internal server error' })
     }
   } else if (req.method === 'GET') {
-    const id = parseInt(req.query.id as string)
-
     try {
-      const room = await roomService.findRoom(id)
-      if (room) {
-        res.status(200).json(room)
-      } else {
-        res.status(404).end()
-      }
+      const room = await roomService.findAll()
+
+      res.status(200).json(room)
     } catch (err) {
+      console.error(err)
       res.status(500).json({ error: 'Internal server error' })
     }
   } else {

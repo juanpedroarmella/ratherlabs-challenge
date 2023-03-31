@@ -1,29 +1,29 @@
+import { StudentModel } from '@/model/StudentModel'
 import { RoomModel } from '@/model/RoomModel'
 import { SiblingModel } from '@/model/SiblingModel'
-import { StudentModel } from '../model/StudentModel'
 
 export class StudentRepository {
   async create (
     name: string,
     age: number,
     gender: string,
-    roomId: number,
-    siblingId?: number
+    roomId: number
   ): Promise<StudentModel> {
     const student = await StudentModel.create({
       name,
       age,
       gender,
-      roomId,
-      siblingId
+      roomId
     })
     return student
   }
 
+  async getAll (): Promise<StudentModel[]> {
+    return await StudentModel.findAll()
+  }
+
   async findById (id: number): Promise<StudentModel | null> {
-    const student = await StudentModel.findByPk(id, {
-      include: [RoomModel, SiblingModel]
-    })
+    const student = await StudentModel.findByPk(id)
     return student
   }
 
@@ -41,7 +41,7 @@ export class StudentRepository {
     siblingId?: number
   ): Promise<[number]> {
     const result = await StudentModel.update(
-      { name, age, gender, roomId, siblingId },
+      { name, age, gender, roomId },
       { where: { id } }
     )
     return result

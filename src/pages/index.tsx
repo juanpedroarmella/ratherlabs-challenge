@@ -44,12 +44,12 @@ const Home: NextPage<Props> = ({ rooms, error }) => {
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
   try {
     const apiUrl = process.env.API_URL
-    const res = await axios.get(`${apiUrl}/room`)
+    const res = await axios.get(`${apiUrl}/rooms`)
     const rooms: Room[] = res.data
 
     return { props: { rooms } }
   } catch (e) {
-    return { props: { error: 'Error al cargar las habitaciones.' } }
+    return { props: { error: e.message } }
   }
 }
 

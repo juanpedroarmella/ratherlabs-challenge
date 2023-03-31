@@ -1,11 +1,11 @@
+import { SiblingRepository } from '@/repository/SiblingRepository'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { StudentService } from '@/service/StudentService'
+import { StudentRepository } from '@/repository/StudentRepository'
 import sequelize from '@/db/db'
+import { StudentModel } from '@/model/StudentModel'
 import { RoomModel } from '@/model/RoomModel'
 import { SiblingModel } from '@/model/SiblingModel'
-import { StudentModel } from '@/model/StudentModel'
-import { SiblingRepository } from '@/repository/SiblingRepository'
-import { StudentRepository } from '@/repository/StudentRepository'
-import { StudentService } from '@/service/StudentService'
-import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function studentController (
   req: NextApiRequest,
@@ -14,8 +14,8 @@ export default async function studentController (
   await sequelize.sync()
   sequelize.addModels([StudentModel, RoomModel, SiblingModel])
 
-  const siblingRepository = new SiblingRepository()
   const studentRepository = new StudentRepository()
+  const siblingRepository = new SiblingRepository()
 
   const studentService = new StudentService(
     studentRepository,
@@ -23,10 +23,24 @@ export default async function studentController (
   )
 
   switch (req.method) {
+    case 'POST': {
+      try {
+        const { name, age, gender, roomId } = req.body
+        const newStudent = await studentService.createStudent(
+          name,
+          age,
+          gender,
+          roomId
+        )
+        res.status(201).json(newStudent)
+      } catch (error) {
+        res.status(500).end('Internal server error')
+      }
+      break
+    }
     case 'PUT': {
       try {
-        const id = parseInt(req.query.id as string)
-        const { name, age, gender, roomId, siblingId } = req.body
+        const { id, name, age, gender, roomId, siblingId } = req.body
         const [rowsAffected] = await studentService.editStudent(
           id,
           name,
@@ -48,8 +62,8 @@ export default async function studentController (
     case 'GET': {
       try {
         const id = parseInt(req.query.id as string)
-        const students = await studentService.getStudentById(id)
-        students ? res.status(200).json(students) : res.status(404).end()
+        const students = await studentService.getAllStudents()
+        res.status(200).json(students)
       } catch (error) {
         res.status(500).end('Internal server error')
       }

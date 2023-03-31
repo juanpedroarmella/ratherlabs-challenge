@@ -12,7 +12,6 @@ interface RoomProps {
 }
 
 const Room: NextPage = ({ room, error }: RoomProps) => {
-  console.log(room)
   if (error) {
     return (
       <Box m={4}>
@@ -37,7 +36,7 @@ const Room: NextPage = ({ room, error }: RoomProps) => {
           {room.students.map((student: Student) => (
             <ListItem
               component={Link}
-              key={`${student.id}-${student.id}`}
+              key={`${student.name}-${student.id}`}
               href={`/student/${student.id}`}
             >
               {student.name}

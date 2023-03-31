@@ -36,8 +36,6 @@ export const insertData = async (): Promise<void> => {
         }
       })
     )
-
-    console.log('Data inserted')
   } catch (error) {
     console.error(error)
   }

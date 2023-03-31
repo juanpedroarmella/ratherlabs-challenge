@@ -21,19 +21,22 @@ export class RoomService {
 
   async findRoom (id: number): Promise<RoomById | null> {
     const room = await this.roomRepository.findById(id)
-    const students = await this.studentRepository.findAllByRoomId(id)
 
-    const studentsWithIdAndName: Student[] = students.map(({ id, name }) => ({
-      id,
-      name
-    }))
+    if (room) {
+      const students = await this.studentRepository.findAllByRoomId(id)
 
-    return room && studentsWithIdAndName
-      ? {
-          roomName: room.name,
-          students: studentsWithIdAndName
-        }
-      : null
+      const studentsWithIdAndName: Student[] = students.map(({ id, name }) => ({
+        id,
+        name
+      }))
+
+      return {
+        roomName: room.name,
+        students: studentsWithIdAndName
+      }
+    }
+
+    return null
   }
 
   async findAll (): Promise<RoomModel[]> {

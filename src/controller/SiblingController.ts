@@ -6,15 +6,16 @@ import { RoomModel } from '@/model/RoomModel'
 import { StudentModel } from '@/model/StudentModel'
 import sequelize from '@/db/db'
 
-const siblingRepository = new SiblingRepository()
-const siblingService = new SiblingService(siblingRepository)
-
 export default async function siblingController (
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   await sequelize.sync()
   sequelize.addModels([StudentModel, RoomModel, SiblingModel])
+
+  const siblingRepository = new SiblingRepository()
+  const siblingService = new SiblingService(siblingRepository)
+
   if (req.method === 'POST') {
     try {
       const { studentId, siblingId } = req.body

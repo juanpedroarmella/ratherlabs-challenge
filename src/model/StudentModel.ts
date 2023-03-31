@@ -44,19 +44,6 @@ export class StudentModel extends Model<StudentModel> {
   })
     roomId!: number
 
-  @ForeignKey(() => SiblingModel)
-  @Column({
-    type: DataTypes.INTEGER.UNSIGNED,
-    allowNull: true
-  })
-    siblingId?: number
-
   @BelongsTo(() => RoomModel, 'roomId')
     room!: typeof RoomModel
-
-  @HasMany(() => SiblingModel, 'studentId')
-    siblings!: Array<typeof SiblingModel>
-
-  @BelongsTo(() => SiblingModel, 'siblingId')
-    sibling!: typeof SiblingModel
 }
