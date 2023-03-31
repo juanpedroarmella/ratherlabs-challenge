@@ -11,12 +11,14 @@ const roomRepository = new RoomRepository()
 const studentRepository = new StudentRepository()
 const roomService = new RoomService(roomRepository, studentRepository)
 
-export default async function roomController (
+export default async function roomController(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   await sequelize.sync()
   sequelize.addModels([StudentModel, RoomModel, SiblingModel])
+
+  console.log(sequelize)
 
   if (req.method === 'POST') {
     const { name } = req.body
