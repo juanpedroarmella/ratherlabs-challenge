@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default function Header () {
   return (
-    <AppBar position='static'>
+    <AppBar position='fixed'>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Typography
           variant='h6'

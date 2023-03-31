@@ -1,10 +1,19 @@
-import Link from 'next/link'
-import type { NextPage, GetServerSideProps } from 'next/types'
-import axios from 'axios'
-import { Alert, Typography, List, ListItem } from '@mui/material'
+import RootContainer from '@/atoms/RootContainer'
+import type { RoomById } from '@/types/interfaces/Room'
+import type { Student } from '@/types/interfaces/Student'
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
-import { RoomById } from '@/types/interfaces/Room'
-import { Student } from '@/types/interfaces/Student'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
+import axios from 'axios'
+import Link from 'next/link'
+import type { GetServerSideProps, NextPage } from 'next/types'
 
 interface RoomProps {
   room?: RoomById
@@ -14,37 +23,41 @@ interface RoomProps {
 const Room: NextPage = ({ room, error }: RoomProps) => {
   if (error) {
     return (
-      <Box m={4}>
+      <RootContainer component='main'>
         <Alert severity='error'>{error}</Alert>
-      </Box>
+      </RootContainer>
     )
   }
 
   return (
-    <Box
-      display='flex'
-      flexDirection='column'
-      justifyContent='center'
-      mx='5vw'
-      my={2}
-      gap={2}
-    >
+    <RootContainer component='main'>
       <Typography variant='h5'>{room.roomName}</Typography>
-      <Box>
-        <Typography variant='subtitle1'>Students</Typography>
-        <List>
-          {room.students.map((student: Student) => (
-            <ListItem
-              component={Link}
-              key={`${student.name}-${student.id}`}
-              href={`/student/${student.id}`}
-            >
-              {student.name}
-            </ListItem>
-          ))}
-        </List>
+      <Box display='flex' flexDirection='column' alignItems='flex-start'>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {room.students.map((student: Student) => (
+                <TableRow key={`${student.name}-${student.id}`}>
+                  <TableCell scope='row'>
+                    <Typography
+                      component={Link}
+                      href={`/student/${student.id}`}
+                    >
+                      {student.name}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
-    </Box>
+    </RootContainer>
   )
 }
 

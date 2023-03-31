@@ -1,8 +1,18 @@
-import Link from 'next/link'
-import type { NextPage, GetServerSideProps } from 'next/types'
+import RootContainer from '@/atoms/RootContainer'
+import type { Room } from '@/types/interfaces/Room'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
 import axios from 'axios'
-import { Grid, List, ListItem, ListItemText, Paper, Alert } from '@mui/material'
-import { Room } from '@/types/interfaces/Room'
+import Link from 'next/link'
+import type { GetServerSideProps, NextPage } from 'next/types'
 
 interface Props {
   rooms?: Room[]
@@ -12,32 +22,36 @@ interface Props {
 const Home: NextPage<Props> = ({ rooms, error }) => {
   if (error) {
     return (
-      <Grid container justifyContent='center' mt={3}>
-        <Grid item xs={12} sm={10} md={8} lg={6}>
-          <Alert severity='error'>{error}</Alert>
-        </Grid>
-      </Grid>
+      <RootContainer component='main'>
+        <Alert severity='error'>{error}</Alert>
+      </RootContainer>
     )
   }
 
   return (
-    <Grid container justifyContent='center' mt={3}>
-      <Grid item xs={12} sm={10} md={8} lg={6}>
-        <Paper elevation={3}>
-          <List>
+    <RootContainer component='main'>
+      <Typography variant='h4'>Rooms</Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {rooms.map((room) => (
-              <ListItem
-                key={room.id}
-                component={Link}
-                href={`/room/${room.id}`}
-              >
-                <ListItemText primary={room.name} />
-              </ListItem>
+              <TableRow key={`${room.id}-${room.name}`}>
+                <TableCell scope='row'>
+                  <Typography component={Link} href={`/room/${room.id}`}>
+                    {room.name}
+                  </Typography>
+                </TableCell>
+              </TableRow>
             ))}
-          </List>
-        </Paper>
-      </Grid>
-    </Grid>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </RootContainer>
   )
 }
 

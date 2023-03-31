@@ -1,9 +1,18 @@
-import Link from 'next/link'
-import { Box, Typography, Alert, List, ListItem } from '@mui/material'
+import RootContainer from '@/atoms/RootContainer'
+import type { Student, StudentById } from '@/types/interfaces/Student'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
 import axios from 'axios'
+import Link from 'next/link'
 import type { GetServerSideProps, NextPage } from 'next/types'
-import { Student, StudentById } from '@/types/interfaces/Student'
-import { RoomById } from '@/types/interfaces/Room'
 
 interface StudentProps {
   student?: StudentById
@@ -13,46 +22,73 @@ interface StudentProps {
 const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
   if (error) {
     return (
-      <Box m={4}>
+      <RootContainer component='main'>
         <Alert severity='error'>{error}</Alert>
-      </Box>
+      </RootContainer>
     )
   }
 
   return (
-    <Box
-      component='main'
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        mx: '5vw',
-        my: 2
-      }}
-    >
-      <Typography variant='h4'>Student Information</Typography>
-      <Box p={1} display='grid' gap={1}>
-        <Typography>Name: {student.student.name}</Typography>
-        <Typography>Age: {student.student.age}</Typography>
-        <Typography>Gender: {student.student.gender}</Typography>
-        <Typography>Siblings:</Typography>
+    <RootContainer component='main'>
+      <Box>
+        <Typography variant='h5' textAlign='start' mb={2}>
+          Student Information
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Age</TableCell>
+                <TableCell>Gender</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>{student.student.name}</TableCell>
+                <TableCell>{student.student.age}</TableCell>
+                <TableCell>{student.student.gender}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+
+      <Box>
+        <Typography variant='h5' textAlign='start' mb={2}>
+          Siblings
+        </Typography>
         {student.siblings.length > 0
           ? (
-            <List>
-              {student.siblings.map((sibling: Student) => (
-                <ListItem key={`${sibling.name}-${sibling.id}`}>
-                  <Typography component={Link} href={`/student/${sibling.id}`}>
-                    {sibling.name}{' '}
-                  </Typography>
-                </ListItem>
-              ))}
-            </List>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {student.siblings.map((student: Student) => (
+                    <TableRow key={`${student.name}-${student.id}`}>
+                      <TableCell scope='row'>
+                        <Typography
+                          component={Link}
+                          href={`/student/${student.id}`}
+                        >
+                          {student.name}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
             )
           : (
-            <Typography pl={1}>The student does not have any siblings</Typography>
+            <Alert severity='info'>The student does not have any siblings</Alert>
             )}
       </Box>
-    </Box>
+    </RootContainer>
   )
 }
 
