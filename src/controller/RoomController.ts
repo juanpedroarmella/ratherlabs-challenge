@@ -1,3 +1,4 @@
+import { StudentRepository } from '@/repository/StudentRepository'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { RoomRepository } from '@/repository/RoomRepository'
 import { RoomService } from '@/service/RoomService'
@@ -7,7 +8,8 @@ import { SiblingModel } from '@/model/SiblingModel'
 import { StudentModel } from '@/model/StudentModel'
 
 const roomRepository = new RoomRepository()
-const roomService = new RoomService(roomRepository)
+const studentRepository = new StudentRepository()
+const roomService = new RoomService(roomRepository, studentRepository)
 
 export default async function roomController (
   req: NextApiRequest,

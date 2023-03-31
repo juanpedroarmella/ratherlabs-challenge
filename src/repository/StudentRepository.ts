@@ -27,6 +27,11 @@ export class StudentRepository {
     return student
   }
 
+  async findAllByRoomId (id: number): Promise<StudentModel[]> {
+    const student = await StudentModel.findAll({ where: { roomId: id } })
+    return student
+  }
+
   async update (
     id: number,
     name: string,

@@ -3,11 +3,13 @@ import { RoomModel } from '@/model/RoomModel'
 import { SiblingModel } from '@/model/SiblingModel'
 import { StudentModel } from '@/model/StudentModel'
 import { RoomRepository } from '@/repository/RoomRepository'
+import { StudentRepository } from '@/repository/StudentRepository'
 import { RoomService } from '@/service/RoomService'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 const roomRepository = new RoomRepository()
-const roomService = new RoomService(roomRepository)
+const studentRepository = new StudentRepository()
+const roomService = new RoomService(roomRepository, studentRepository)
 
 export default async function roomControllerId (
   req: NextApiRequest,
@@ -22,15 +24,12 @@ export default async function roomControllerId (
     try {
       const [updatedRows] = await roomService.editRoom(id, name)
 
-      console.log(updatedRows)
-
       if (updatedRows === 0) {
         res.status(404).end()
       } else {
         res.status(200).json({ updatedRows })
       }
     } catch (err) {
-      console.error(err)
       res.status(500).json({ error: 'Internal server error' })
     }
   } else if (req.method === 'GET') {
@@ -44,7 +43,6 @@ export default async function roomControllerId (
         res.status(404).end()
       }
     } catch (err) {
-      console.error(err)
       res.status(500).json({ error: 'Internal server error' })
     }
   } else {

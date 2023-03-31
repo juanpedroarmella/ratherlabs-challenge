@@ -2,13 +2,7 @@ import Link from 'next/link'
 import type { NextPage, GetServerSideProps } from 'next/types'
 import axios from 'axios'
 import { Grid, List, ListItem, ListItemText, Paper, Alert } from '@mui/material'
-
-interface Room {
-  id: number
-  name: string
-  updatedAt: string
-  createdAt: string
-}
+import { Room } from '@/types/interfaces/Room'
 
 interface Props {
   rooms?: Room[]
