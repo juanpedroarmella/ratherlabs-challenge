@@ -12,8 +12,7 @@ export class SiblingRepository {
   }
 
   async create (studentId: number, siblingId: number): Promise<SiblingModel> {
-    const sibling = await SiblingModel.create({ studentId, siblingId })
-    return sibling
+    return await SiblingModel.create({ studentId, siblingId })
   }
 
   async delete (studentId: number, siblingId: number): Promise<number> {
@@ -25,9 +24,14 @@ export class SiblingRepository {
 
   async update (studentId: number, siblingId: number): Promise<[number]> {
     const result = await SiblingModel.update(
-      {},
+      { studentId, siblingId },
       {
-        where: { studentId, siblingId }
+        where: {
+          [Op.or]: [
+            { studentId, siblingId },
+            { siblingId: studentId, studentId: siblingId }
+          ]
+        }
       }
     )
     return result

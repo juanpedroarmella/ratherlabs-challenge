@@ -1,20 +1,22 @@
+import { StudentRepository } from '@/repository/StudentRepository'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { SiblingModel } from '@/model/SiblingModel'
 import { SiblingRepository } from '@/repository/SiblingRepository'
 import { SiblingService } from '@/service/SiblingService'
-import { RoomModel } from '@/model/RoomModel'
-import { StudentModel } from '@/model/StudentModel'
-import sequelize from '@/db/db'
+import sync from '@/db/sync'
 
-export default async function siblingController (
+const siblingController = async (
   req: NextApiRequest,
   res: NextApiResponse
-) {
-  await sequelize.sync()
-  sequelize.addModels([StudentModel, RoomModel, SiblingModel])
+): Promise<void> => {
+  await sync()
 
   const siblingRepository = new SiblingRepository()
-  const siblingService = new SiblingService(siblingRepository)
+  const studentRepository = new StudentRepository()
+  const siblingService = new SiblingService(
+    siblingRepository,
+    studentRepository
+  )
 
   if (req.method === 'POST') {
     try {
@@ -31,7 +33,7 @@ export default async function siblingController (
   } else if (req.method === 'PUT') {
     try {
       const { studentId, siblingId } = req.body
-      const result: [number] = await siblingService.editSibling(
+      const result: [number] = await siblingService.editOneSibling(
         studentId,
         siblingId
       )
@@ -56,3 +58,5 @@ export default async function siblingController (
     res.status(404).send('Not Found')
   }
 }
+
+export default siblingController

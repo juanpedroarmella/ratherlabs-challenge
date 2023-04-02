@@ -1,5 +1,5 @@
 import RootContainer from '@/atoms/RootContainer'
-import type { RoomById } from '@/types/interfaces/Room'
+import type { GetRoomByIdResponse } from '@/types/interfaces/Room'
 import type { Student } from '@/types/interfaces/Student'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
@@ -16,12 +16,12 @@ import Link from 'next/link'
 import type { GetServerSideProps, NextPage } from 'next/types'
 
 interface RoomProps {
-  room?: RoomById
+  room?: GetRoomByIdResponse
   error?: string
 }
 
 const Room: NextPage = ({ room, error }: RoomProps) => {
-  if (error) {
+  if (error !== undefined) {
     return (
       <RootContainer component='main'>
         <Alert severity='error'>{error}</Alert>
@@ -31,7 +31,7 @@ const Room: NextPage = ({ room, error }: RoomProps) => {
 
   return (
     <RootContainer component='main'>
-      <Typography variant='h5'>{room.roomName}</Typography>
+      <Typography variant='h5'>{room?.roomName}</Typography>
       <Box display='flex' flexDirection='column' alignItems='flex-start'>
         <TableContainer component={Paper}>
           <Table>
@@ -41,7 +41,7 @@ const Room: NextPage = ({ room, error }: RoomProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {room.students.map((student: Student) => (
+              {room?.students.map((student: Student) => (
                 <TableRow key={`${student.name}-${student.id}`}>
                   <TableCell scope='row'>
                     <Typography
@@ -64,12 +64,12 @@ const Room: NextPage = ({ room, error }: RoomProps) => {
 export const getServerSideProps: GetServerSideProps<RoomProps> = async (
   context
 ) => {
-  const { params } = context
+  const id = context?.params?.id as string
 
   try {
-    const apiUrl = process.env.API_URL
-    const res = await axios.get(`${apiUrl}/room/${params.id}`)
-    const room: RoomById = res.data
+    const apiUrl = process.env.API_URL as string
+    const res = await axios.get(`${apiUrl}/room/${id}`)
+    const room: GetRoomByIdResponse = res.data
     return { props: { room } }
   } catch (e) {
     const error = e.message

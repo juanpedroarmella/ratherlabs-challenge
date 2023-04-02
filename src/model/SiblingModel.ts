@@ -9,7 +9,7 @@ import { DataTypes } from 'sequelize'
 import { StudentModel } from './StudentModel'
 
 @Table({ tableName: 'siblings' })
-export class SiblingModel extends Model<SiblingModel> {
+export class SiblingModel extends Model {
   @ForeignKey(() => StudentModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,

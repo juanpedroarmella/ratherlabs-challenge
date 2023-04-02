@@ -1,10 +1,8 @@
-import sequelize from '@/db/db'
 import { RoomModel } from '../model/RoomModel'
 
 export class RoomRepository {
   async create (name: string): Promise<RoomModel> {
-    const room = await RoomModel.create({ name })
-    return room
+    return await RoomModel.create({ name })
   }
 
   async findById (id: number): Promise<RoomModel | null> {

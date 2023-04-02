@@ -1,12 +1,13 @@
-import { SiblingRepository } from '@/repository/SiblingRepository'
+import { GetStudentByIdResponse } from './../types/interfaces/Student'
 import { StudentModel } from '../model/StudentModel'
 import { StudentRepository } from '@/repository/StudentRepository'
-import { StudentById } from '@/types/interfaces/Student'
+import { EditStudentResponse } from '@/types/interfaces/Student'
+import { SiblingService } from './SiblingService'
 
 export class StudentService {
   constructor (
     private readonly studentRepository: StudentRepository,
-    private readonly siblingRepository: SiblingRepository
+    private readonly siblingService: SiblingService
   ) {}
 
   async createStudent (
@@ -24,44 +25,34 @@ export class StudentService {
     age: number,
     gender: string,
     roomId: number,
-    siblingId?: number
-  ): Promise<[number]> {
-    return await this.studentRepository.update(
+    siblings: number[] = []
+  ): Promise<EditStudentResponse> {
+    const [updatedStudentRows] = await this.studentRepository.update(
       id,
       name,
       age,
       gender,
-      roomId,
-      siblingId
+      roomId
     )
+
+    const updatedSiblingsRows = await this.siblingService.editAllSiblings(
+      id,
+      siblings
+    )
+
+    return { updatedStudentRows, updatedSiblingsRows }
   }
 
   async getAllStudents (): Promise<StudentModel[]> {
     return await this.studentRepository.getAll()
   }
 
-  async getStudentById (id: number): Promise<StudentById | null> {
+  async getStudentById (id: number): Promise<GetStudentByIdResponse | null> {
     const student = await this.studentRepository.findById(id)
-    if (student) {
-      const siblings = await this.siblingRepository.findAllById(id)
+    if (student != null) {
+      const siblings = await this.siblingService.findAllById(id)
 
-      const siblingNames = await Promise.all(
-        siblings.map(async (sibling) => {
-          const idToSearch =
-            id === sibling.siblingId ? sibling.studentId : sibling.siblingId
-
-          const siblingStudent = await this.studentRepository.findById(
-            idToSearch
-          )
-
-          return {
-            id: siblingStudent.id,
-            name: siblingStudent.name
-          }
-        })
-      )
-
-      return { student, siblings: siblingNames }
+      return { student, siblings }
     }
 
     return null

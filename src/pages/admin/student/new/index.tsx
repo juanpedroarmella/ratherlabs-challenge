@@ -1,30 +1,41 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
-import axios from 'axios'
+import RootContainer from '@/atoms/RootContainer'
+import useSnackBar from '@/hooks/useSnackBar'
+import { AddStudentRequest } from '@/types/interfaces/Student'
+import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import RootContainer from '@/atoms/RootContainer'
 import Typography from '@mui/material/Typography'
-import { GetServerSideProps, NextPage } from 'next/types'
-import useSnackBar from '@/hooks/useSnackBar'
-import type { AddRoomRequest } from '@/types/interfaces/Room'
+import axios from 'axios'
+import type { GetServerSideProps, NextPage } from 'next/types'
+import type { ChangeEvent, FormEvent } from 'react'
+import { useState } from 'react'
 
-const voidForm = {
-  name: ''
-}
-
-interface NewRoomProps {
+interface PageProps {
   apiUrl: string
 }
 
-const NewRoom: NextPage<NewRoomProps> = ({ apiUrl }): JSX.Element => {
-  const [room, setRoom] = useState<AddRoomRequest>(voidForm)
+export const getServerSideProps: GetServerSideProps = async () => {
+  const apiUrl = process.env.API_URL
+  return { props: { apiUrl } }
+}
+
+const voidForm: AddStudentRequest = {
+  name: '',
+  age: 0,
+  gender: 'male',
+  roomId: 0,
+  siblings: []
+}
+
+const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
+  const [studentData, setStudentData] = useState<AddStudentRequest>(voidForm)
+
   const [isLoading, setIsLoading] = useState(false)
   const { Snackbar, openSnackbar } = useSnackBar()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target
-    setRoom((prevRoom) => ({
+    setStudentData((prevRoom) => ({
       ...prevRoom,
       [name]: value
     }))
@@ -36,11 +47,10 @@ const NewRoom: NextPage<NewRoomProps> = ({ apiUrl }): JSX.Element => {
     event.preventDefault()
     setIsLoading(true)
     try {
-      await axios.post(`${apiUrl}/rooms`, room)
-      setRoom(voidForm)
+      await axios.post(`${apiUrl}/students`, studentData)
+      setStudentData(voidForm)
       openSnackbar('success', 'Room created')
     } catch (error) {
-      console.error(error)
       setIsLoading(false)
       openSnackbar('error', error.message)
     }
@@ -57,7 +67,6 @@ const NewRoom: NextPage<NewRoomProps> = ({ apiUrl }): JSX.Element => {
             <TextField
               label='Name'
               name='name'
-              value={room.name}
               onChange={handleChange}
               required
             />
@@ -81,9 +90,4 @@ const NewRoom: NextPage<NewRoomProps> = ({ apiUrl }): JSX.Element => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const apiUrl = process.env.API_URL
-  return { props: { apiUrl } }
-}
-
-export default NewRoom
+export default NewStudent

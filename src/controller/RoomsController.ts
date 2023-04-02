@@ -2,17 +2,14 @@ import { StudentRepository } from '@/repository/StudentRepository'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { RoomRepository } from '@/repository/RoomRepository'
 import { RoomService } from '@/service/RoomService'
-import sequelize from '@/db/db'
-import { RoomModel } from '@/model/RoomModel'
-import { SiblingModel } from '@/model/SiblingModel'
-import { StudentModel } from '@/model/StudentModel'
 
-export default async function roomsController(
+import sync from '@/db/sync'
+
+const roomsController = async (
   req: NextApiRequest,
   res: NextApiResponse
-) {
-  await sequelize.sync()
-  sequelize.addModels([StudentModel, RoomModel, SiblingModel])
+): Promise<void> => {
+  await sync()
 
   const roomRepository = new RoomRepository()
   const studentRepository = new StudentRepository()
@@ -40,3 +37,5 @@ export default async function roomsController(
     res.status(405).end()
   }
 }
+
+export default roomsController

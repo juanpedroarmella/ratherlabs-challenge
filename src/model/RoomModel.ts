@@ -3,7 +3,7 @@ import { Model, Table, Column, HasMany } from 'sequelize-typescript'
 import { StudentModel } from './StudentModel'
 
 @Table({ tableName: 'rooms' })
-export class RoomModel extends Model<RoomModel> {
+export class RoomModel extends Model {
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     autoIncrement: true,

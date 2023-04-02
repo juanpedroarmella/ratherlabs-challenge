@@ -1,9 +1,8 @@
+import { GetRoomByIdResponse } from './../types/interfaces/Room'
 import { StudentRepository } from './../repository/StudentRepository'
 import { RoomModel } from '../model/RoomModel'
 import { RoomRepository } from '@/repository/RoomRepository'
-import { StudentModel } from '@/model/StudentModel'
 import { Student } from '@/types/interfaces/Student'
-import { RoomById } from '@/types/interfaces/Room'
 
 export class RoomService {
   constructor (
@@ -19,10 +18,10 @@ export class RoomService {
     return await this.roomRepository.update(id, name)
   }
 
-  async findRoom (id: number): Promise<RoomById | null> {
+  async findRoom (id: number): Promise<GetRoomByIdResponse | null> {
     const room = await this.roomRepository.findById(id)
 
-    if (room) {
+    if (room != null) {
       const students = await this.studentRepository.findAllByRoomId(id)
 
       const studentsWithIdAndName: Student[] = students.map(({ id, name }) => ({

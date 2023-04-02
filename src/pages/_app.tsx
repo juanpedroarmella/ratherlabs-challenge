@@ -6,7 +6,7 @@ import {
   useTheme
 } from '@mui/material/styles'
 
-export default function App ({ Component, pageProps }) {
+const App = ({ Component, pageProps }): JSX.Element => {
   const theme = useTheme()
   return (
     <StyledEngineProvider injectFirst>
@@ -18,3 +18,5 @@ export default function App ({ Component, pageProps }) {
     </StyledEngineProvider>
   )
 }
+
+export default App

@@ -13,13 +13,25 @@ import axios from 'axios'
 import Link from 'next/link'
 import type { GetServerSideProps, NextPage } from 'next/types'
 
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  try {
+    const apiUrl = process.env.API_URL as string
+    const res = await axios.get(`${apiUrl}/rooms`)
+    const rooms: Room[] = res.data
+
+    return { props: { rooms } }
+  } catch (e) {
+    return { props: { error: e.message } }
+  }
+}
+
 interface Props {
   rooms?: Room[]
   error?: string
 }
 
 const Home: NextPage<Props> = ({ rooms, error }) => {
-  if (error) {
+  if (error !== undefined) {
     return (
       <RootContainer component='main'>
         <Alert severity='error'>{error}</Alert>
@@ -38,7 +50,7 @@ const Home: NextPage<Props> = ({ rooms, error }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rooms.map((room) => (
+            {rooms?.map((room) => (
               <TableRow key={`${room.id}-${room.name}`}>
                 <TableCell scope='row'>
                   <Typography component={Link} href={`/room/${room.id}`}>
@@ -52,18 +64,6 @@ const Home: NextPage<Props> = ({ rooms, error }) => {
       </TableContainer>
     </RootContainer>
   )
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  try {
-    const apiUrl = process.env.API_URL
-    const res = await axios.get(`${apiUrl}/rooms`)
-    const rooms: Room[] = res.data
-
-    return { props: { rooms } }
-  } catch (e) {
-    return { props: { error: e.message } }
-  }
 }
 
 export default Home

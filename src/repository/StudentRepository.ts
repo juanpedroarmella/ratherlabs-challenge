@@ -1,6 +1,4 @@
 import { StudentModel } from '@/model/StudentModel'
-import { RoomModel } from '@/model/RoomModel'
-import { SiblingModel } from '@/model/SiblingModel'
 
 export class StudentRepository {
   async create (
@@ -9,13 +7,12 @@ export class StudentRepository {
     gender: string,
     roomId: number
   ): Promise<StudentModel> {
-    const student = await StudentModel.create({
+    return await StudentModel.create({
       name,
       age,
       gender,
       roomId
     })
-    return student
   }
 
   async getAll (): Promise<StudentModel[]> {
@@ -37,8 +34,7 @@ export class StudentRepository {
     name: string,
     age: number,
     gender: string,
-    roomId: number,
-    siblingId?: number
+    roomId: number
   ): Promise<[number]> {
     const result = await StudentModel.update(
       { name, age, gender, roomId },

@@ -1,15 +1,14 @@
 import sequelize from './src/db/db'
 import { insertData } from './src/db/insertData'
 
-const sync = async () => {
+const connectAndInsert = async (): Promise<void> => {
   try {
     await sequelize.sync({ force: true })
     await insertData()
   } catch (error) {
     console.error(error)
-  } finally {
-    process.exit(0)
   }
+  process.exit(0)
 }
 
-sync()
+void connectAndInsert()

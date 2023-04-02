@@ -1,41 +1,44 @@
-import sequelize from '@/db/db'
-import { RoomModel } from '@/model/RoomModel'
-import { SiblingModel } from '@/model/SiblingModel'
-import { StudentModel } from '@/model/StudentModel'
+import sync from '@/db/sync'
 import { SiblingRepository } from '@/repository/SiblingRepository'
 import { StudentRepository } from '@/repository/StudentRepository'
+import { SiblingService } from '@/service/SiblingService'
 import { StudentService } from '@/service/StudentService'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function studentController (
+const studentController = async (
   req: NextApiRequest,
   res: NextApiResponse
-) {
-  await sequelize.sync()
-  sequelize.addModels([StudentModel, RoomModel, SiblingModel])
+): Promise<void> => {
+  await sync()
 
   const siblingRepository = new SiblingRepository()
+
   const studentRepository = new StudentRepository()
 
-  const studentService = new StudentService(
-    studentRepository,
-    siblingRepository
+  const siblingService = new SiblingService(
+    siblingRepository,
+    studentRepository
   )
+
+  const studentService = new StudentService(studentRepository, siblingService)
 
   switch (req.method) {
     case 'PUT': {
       try {
         const id = parseInt(req.query.id as string)
         const { name, age, gender, roomId, siblingId } = req.body
-        const [rowsAffected] = await studentService.editStudent(
+        if (Number.isNaN(id)) {
+          throw new Error('Invalid id')
+        }
+        const studentAffected = await studentService.editStudent(
           id,
-          name,
+          name ?? '',
           age,
-          gender,
+          gender ?? '',
           roomId,
           siblingId
         )
-        if (rowsAffected === 0) {
+        if (studentAffected.updatedStudentRows === 0) {
           res.status(404).end(`Student with id ${id} not found`)
         } else {
           res.status(204).end()
@@ -48,8 +51,14 @@ export default async function studentController (
     case 'GET': {
       try {
         const id = parseInt(req.query.id as string)
+        if (Number.isNaN(id)) {
+          const errorMessage = `Invalid id: ${req.query.id as string}`
+          throw new Error(errorMessage)
+        }
         const students = await studentService.getStudentById(id)
-        students ? res.status(200).json(students) : res.status(404).end()
+        students != null
+          ? res.status(200).json(students)
+          : res.status(404).end()
       } catch (error) {
         res.status(500).end('Internal server error')
       }
@@ -57,6 +66,8 @@ export default async function studentController (
     }
     default:
       res.setHeader('Allow', ['POST', 'PUT'])
-      res.status(405).end(`Method ${req.method} Not Allowed`)
+      res.status(405).end('Method not allowed')
   }
 }
+
+export default studentController

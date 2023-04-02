@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import Link from 'next/link'
+import type { NextPage } from 'next/types'
 import React from 'react'
 
 const SectionLinks = styled(Box)`
@@ -14,7 +15,7 @@ const SectionLinks = styled(Box)`
   }
 `
 
-export default function Admin () {
+const Admin: NextPage = (): JSX.Element => {
   return (
     <RootContainer component='main'>
       <Typography variant='h4'>Admin Panel</Typography>
@@ -57,3 +58,5 @@ export default function Admin () {
     </RootContainer>
   )
 }
+
+export default Admin

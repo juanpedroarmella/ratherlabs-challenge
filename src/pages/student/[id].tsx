@@ -1,5 +1,8 @@
 import RootContainer from '@/atoms/RootContainer'
-import type { Student, StudentById } from '@/types/interfaces/Student'
+import type {
+  GetStudentByIdResponse,
+  Student
+} from '@/types/interfaces/Student'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
@@ -14,13 +17,29 @@ import axios from 'axios'
 import Link from 'next/link'
 import type { GetServerSideProps, NextPage } from 'next/types'
 
+export const getServerSideProps: GetServerSideProps<StudentProps> = async (
+  context
+) => {
+  const id = context?.params?.id as string
+
+  try {
+    const apiUrl = process.env.API_URL as string
+    const res = await axios.get(`${apiUrl}/student/${id}`)
+    const student: GetStudentByIdResponse = res.data
+    return { props: { student } }
+  } catch (e) {
+    const error = e.message
+    return { props: { error } }
+  }
+}
+
 interface StudentProps {
-  student?: StudentById
+  student?: GetStudentByIdResponse
   error?: string
 }
 
 const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
-  if (error) {
+  if (error !== undefined) {
     return (
       <RootContainer component='main'>
         <Alert severity='error'>{error}</Alert>
@@ -45,9 +64,9 @@ const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>{student.student.name}</TableCell>
-                <TableCell>{student.student.age}</TableCell>
-                <TableCell>{student.student.gender}</TableCell>
+                <TableCell>{student?.student.name}</TableCell>
+                <TableCell>{student?.student.age}</TableCell>
+                <TableCell>{student?.student.gender}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -58,7 +77,7 @@ const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
         <Typography variant='h5' textAlign='start' mb={2}>
           Siblings
         </Typography>
-        {student.siblings.length > 0
+        {(student != null) && student?.siblings?.length > 0
           ? (
             <TableContainer component={Paper}>
               <Table>
@@ -68,7 +87,7 @@ const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {student.siblings.map((student: Student) => (
+                  {student?.siblings.map((student: Student) => (
                     <TableRow key={`${student.name}-${student.id}`}>
                       <TableCell scope='row'>
                         <Typography
@@ -90,22 +109,6 @@ const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
       </Box>
     </RootContainer>
   )
-}
-
-export const getServerSideProps: GetServerSideProps<StudentProps> = async (
-  context
-) => {
-  const { params } = context
-
-  try {
-    const apiUrl = process.env.API_URL
-    const res = await axios.get(`${apiUrl}/student/${params.id}`)
-    const student: StudentById = res.data
-    return { props: { student } }
-  } catch (e) {
-    const error = e.message
-    return { props: { error } }
-  }
 }
 
 export default StudentPage

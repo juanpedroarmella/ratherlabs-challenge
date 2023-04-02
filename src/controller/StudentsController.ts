@@ -2,25 +2,25 @@ import { SiblingRepository } from '@/repository/SiblingRepository'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { StudentService } from '@/service/StudentService'
 import { StudentRepository } from '@/repository/StudentRepository'
-import sequelize from '@/db/db'
-import { StudentModel } from '@/model/StudentModel'
-import { RoomModel } from '@/model/RoomModel'
-import { SiblingModel } from '@/model/SiblingModel'
+import { SiblingService } from '@/service/SiblingService'
+import sync from '@/db/sync'
 
 export default async function studentController (
   req: NextApiRequest,
   res: NextApiResponse
-) {
-  await sequelize.sync()
-  sequelize.addModels([StudentModel, RoomModel, SiblingModel])
+): Promise<void> {
+  await sync()
 
   const studentRepository = new StudentRepository()
+
   const siblingRepository = new SiblingRepository()
 
-  const studentService = new StudentService(
-    studentRepository,
-    siblingRepository
+  const siblingService = new SiblingService(
+    siblingRepository,
+    studentRepository
   )
+
+  const studentService = new StudentService(studentRepository, siblingService)
 
   switch (req.method) {
     case 'POST': {
@@ -40,17 +40,17 @@ export default async function studentController (
     }
     case 'PUT': {
       try {
-        const { id, name, age, gender, roomId, siblingId } = req.body
-        const [rowsAffected] = await studentService.editStudent(
+        const { id, name, age, gender, roomId, siblings } = req.body
+        const editStudentResponse = await studentService.editStudent(
           id,
           name,
           age,
           gender,
           roomId,
-          siblingId
+          siblings
         )
-        if (rowsAffected === 0) {
-          res.status(404).end(`Student with id ${id} not found`)
+        if (editStudentResponse.updatedStudentRows === 0) {
+          res.status(404).end('Not found')
         } else {
           res.status(204).end()
         }
@@ -61,7 +61,6 @@ export default async function studentController (
     }
     case 'GET': {
       try {
-        const id = parseInt(req.query.id as string)
         const students = await studentService.getAllStudents()
         res.status(200).json(students)
       } catch (error) {
@@ -71,6 +70,6 @@ export default async function studentController (
     }
     default:
       res.setHeader('Allow', ['POST', 'PUT'])
-      res.status(405).end(`Method ${req.method} Not Allowed`)
+      res.status(405).end('Method not allowed')
   }
 }

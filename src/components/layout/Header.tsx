@@ -3,8 +3,9 @@ import Button from '@mui/material/Button'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import Link from 'next/link'
+import React from 'react'
 
-export default function Header () {
+export const Header = (): JSX.Element => {
   return (
     <AppBar position='fixed'>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -28,3 +29,5 @@ export default function Header () {
     </AppBar>
   )
 }
+
+export default Header

@@ -5,7 +5,11 @@ export interface Room {
   name: string
 }
 
-export interface RoomById {
+export interface GetRoomByIdResponse {
   roomName: string
   students: Student[]
+}
+
+export interface AddRoomRequest {
+  name: string
 }
