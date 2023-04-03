@@ -1,9 +1,9 @@
 import RootContainer from '@/components/atoms/RootContainer'
-import SelectRoom from '@/components/tenant/new-student/SelectRoom'
-import SelectSiblings from '@/components/tenant/new-student/SelectSiblings'
+import SelectRoom from '@/components/selects/SelectRoom'
+import SelectSiblings from '@/components/selects/SelectSiblings'
 import SiblingsList from '@/components/tenant/new-student/SiblingsList'
 import useSnackBar from '@/hooks/useSnackBar'
-import { AddStudentRequest } from '@/types/interfaces/Student'
+import type { AddStudentRequest } from '@/types/interfaces/Student'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import MenuItem from '@mui/material/MenuItem'
@@ -98,8 +98,7 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
               name='gender'
               value={studentData.gender}
               onChange={handleChange}
-              required
-            >
+              required>
               <MenuItem value='male'>Male</MenuItem>
               <MenuItem value='female'>Female</MenuItem>
               <MenuItem value='other'>Other</MenuItem>
@@ -128,8 +127,7 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
               variant='contained'
               color='primary'
               type='submit'
-              disabled={isLoading}
-            >
+              disabled={isLoading}>
               {isLoading ? 'Cargando...' : 'Enviar'}
             </Button>
           </Grid>
