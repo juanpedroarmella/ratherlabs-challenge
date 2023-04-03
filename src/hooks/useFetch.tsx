@@ -23,7 +23,7 @@ const useFetch = <T,>(apiUrl: string): UseFetchReturn<T> => {
       setIsLoading(false)
     }
 
-    fetchData()
+    void fetchData()
   }, [apiUrl])
 
   return { data, isLoading, error }

@@ -1,5 +1,6 @@
 import LoadingIndicator from '@/components/atoms/LoadingIndicator'
 import useFetch from '@/hooks/useFetch'
+import useSnackBar from '@/hooks/useSnackBar'
 import { AddStudentRequest, Student } from '@/types/interfaces/Student'
 import { Alert, Box } from '@mui/material'
 import Grid from '@mui/material/Grid'
@@ -20,6 +21,8 @@ const SelectSiblings: React.FC<SelectSiblingsProps> = ({
 }): JSX.Element => {
   const { isLoading, data, error } = useFetch<Student[]>(`${apiUrl}/students`)
 
+  const { Snackbar, openSnackbar } = useSnackBar()
+
   const [selectedSibling, setSelectedSibling] = useState<string>('')
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -27,10 +30,17 @@ const SelectSiblings: React.FC<SelectSiblingsProps> = ({
     setSelectedSibling(value)
     const findSibling = data?.find((student) => student.id.toString() == value)
     if (findSibling != null) {
-      setStudentData((prevStudentData) => ({
-        ...prevStudentData,
-        siblings: [...siblings, findSibling]
-      }))
+      const siblingExists = siblings.some(
+        (sibling) => sibling.id === findSibling.id
+      )
+      if (!siblingExists) {
+        setStudentData((prevStudentData) => ({
+          ...prevStudentData,
+          siblings: [...siblings, findSibling]
+        }))
+      } else {
+        openSnackbar('error', 'Sibling already added!') // <- Mensaje de error
+      }
     }
   }
 
@@ -67,6 +77,7 @@ const SelectSiblings: React.FC<SelectSiblingsProps> = ({
           )
         })}
       </TextField>
+      <>{Snackbar}</>
     </Grid>
   )
 }

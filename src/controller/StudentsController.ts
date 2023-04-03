@@ -25,12 +25,13 @@ export default async function studentController (
   switch (req.method) {
     case 'POST': {
       try {
-        const { name, age, gender, roomId } = req.body
+        const { name, age, gender, roomId, siblings } = req.body
         const newStudent = await studentService.createStudent(
           name,
           age,
           gender,
-          roomId
+          roomId,
+          siblings
         )
         res.status(201).json(newStudent)
       } catch (error) {

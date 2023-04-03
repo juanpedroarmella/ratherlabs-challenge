@@ -1,4 +1,4 @@
-import { GetStudentByIdResponse } from './../types/interfaces/Student'
+import { GetStudentByIdResponse, Student } from './../types/interfaces/Student'
 import { StudentModel } from '../model/StudentModel'
 import { StudentRepository } from '@/repository/StudentRepository'
 import { EditStudentResponse } from '@/types/interfaces/Student'
@@ -14,9 +14,19 @@ export class StudentService {
     name: string,
     age: number,
     gender: string,
-    roomId: number
+    roomId: number,
+    siblings: Student[]
   ): Promise<StudentModel> {
-    return await this.studentRepository.create(name, age, gender, roomId)
+    const student = await this.studentRepository.create(
+      name,
+      age,
+      gender,
+      roomId
+    )
+    siblings.map(async (sibling: Student) => {
+      await this.siblingService.createSibling(student.id, sibling.id)
+    })
+    return student
   }
 
   async editStudent (

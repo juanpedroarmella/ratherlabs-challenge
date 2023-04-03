@@ -5,31 +5,31 @@ export class SiblingRepository {
   async findAllById (id: number): Promise<SiblingModel[]> {
     const siblings = await SiblingModel.findAll({
       where: {
-        [Op.or]: [{ studentId: id }, { siblingId: id }]
+        [Op.or]: [{ siblingId1: id }, { siblingId2: id }]
       }
     })
     return siblings
   }
 
-  async create (studentId: number, siblingId: number): Promise<SiblingModel> {
-    return await SiblingModel.create({ studentId, siblingId })
+  async create (siblingId1: number, siblingId2: number): Promise<SiblingModel> {
+    return await SiblingModel.create({ siblingId1, siblingId2 })
   }
 
-  async delete (studentId: number, siblingId: number): Promise<number> {
+  async delete (siblingId1: number, siblingId2: number): Promise<number> {
     const result = await SiblingModel.destroy({
-      where: { studentId, siblingId }
+      where: { siblingId1, siblingId2 }
     })
     return result
   }
 
-  async update (studentId: number, siblingId: number): Promise<[number]> {
+  async update (siblingId1: number, siblingId2: number): Promise<[number]> {
     const result = await SiblingModel.update(
-      { studentId, siblingId },
+      { siblingId1, siblingId2 },
       {
         where: {
           [Op.or]: [
-            { studentId, siblingId },
-            { siblingId: studentId, studentId: siblingId }
+            { siblingId1, siblingId2 },
+            { siblingId1: siblingId2, siblingId2: siblingId1 }
           ]
         }
       }

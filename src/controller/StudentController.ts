@@ -26,17 +26,17 @@ const studentController = async (
     case 'PUT': {
       try {
         const id = parseInt(req.query.id as string)
-        const { name, age, gender, roomId, siblingId } = req.body
+        const { name, age, gender, roomId, siblings } = req.body
         if (Number.isNaN(id)) {
           throw new Error('Invalid id')
         }
         const studentAffected = await studentService.editStudent(
           id,
-          name ?? '',
+          name,
           age,
-          gender ?? '',
+          gender,
           roomId,
-          siblingId
+          siblings
         )
         if (studentAffected.updatedStudentRows === 0) {
           res.status(404).end(`Student with id ${id} not found`)
@@ -55,12 +55,11 @@ const studentController = async (
           const errorMessage = `Invalid id: ${req.query.id as string}`
           throw new Error(errorMessage)
         }
-        const students = await studentService.getStudentById(id)
-        students != null
-          ? res.status(200).json(students)
-          : res.status(404).end()
+        const student = await studentService.getStudentById(id)
+        student != null ? res.status(200).json(student) : res.status(404).end()
       } catch (error) {
         res.status(500).end('Internal server error')
+        console.log(error)
       }
       break
     }

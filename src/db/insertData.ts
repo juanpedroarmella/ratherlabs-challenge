@@ -30,8 +30,8 @@ export const insertData = async (): Promise<void> => {
           students[Math.floor(Math.random() * students.length - 1) + 1]
         if (student.id !== sibling.id) {
           await SiblingModel.create({
-            studentId: student.id,
-            siblingId: sibling.id
+            siblingId1: student.id,
+            siblingId2: sibling.id
           })
         }
       })

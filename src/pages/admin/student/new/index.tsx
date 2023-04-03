@@ -1,21 +1,15 @@
 import RootContainer from '@/components/atoms/RootContainer'
 import SelectRoom from '@/components/tenant/new-student/SelectRoom'
 import SelectSiblings from '@/components/tenant/new-student/SelectSiblings'
+import SiblingsList from '@/components/tenant/new-student/SiblingsList'
 import useSnackBar from '@/hooks/useSnackBar'
 import { AddStudentRequest } from '@/types/interfaces/Student'
-import {
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Table
-} from '@mui/material'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import axios from 'axios'
 import type { GetServerSideProps, NextPage } from 'next/types'
 import type { ChangeEvent, FormEvent } from 'react'
 import { useState } from 'react'
@@ -57,8 +51,7 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
     event.preventDefault()
     setIsLoading(true)
     try {
-      console.log(studentData)
-      // await axios.post(`${apiUrl}/students`, studentData)
+      await axios.post(`${apiUrl}/students`, studentData)
       setStudentData(voidForm)
       openSnackbar('success', 'Estudiante creado con éxito')
     } catch (error) {
@@ -125,45 +118,10 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
             apiUrl={apiUrl}
           />
 
-          <Grid item mb={2}>
-            <Typography variant='h6' mb={2}>
-              Students added:
-            </Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {studentData.siblings.map((student) => (
-                    <TableRow key={student.id}>
-                      <TableCell>{student.name}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant='outlined'
-                          size='small'
-                          onClick={() => {
-                            const newSiblings = studentData.siblings.filter(
-                              (sibling) => sibling.id !== student.id
-                            )
-                            setStudentData((prevStudentData) => ({
-                              ...prevStudentData,
-                              siblings: newSiblings
-                            }))
-                          }}
-                        >
-                          Remove
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
+          <SiblingsList
+            siblings={studentData.siblings}
+            setStudentData={setStudentData}
+          />
 
           <Grid item>
             <Button

@@ -50,7 +50,7 @@ export class SiblingService {
 
     for (const sibling of siblings) {
       const idToSearch =
-        id === sibling.siblingId ? sibling.studentId : sibling.siblingId
+        id === sibling.siblingId1 ? sibling.siblingId2 : sibling.siblingId1
 
       const siblingStudent = await this.studentRepository.findById(idToSearch)
 
@@ -65,7 +65,7 @@ export class SiblingService {
     return siblingsWithName
   }
 
-  async deleteSibling (studentId: number, siblingId: number): Promise<number> {
-    return await this.siblingRepository.delete(studentId, siblingId)
+  async deleteSibling (siblingId1: number, siblingId2: number): Promise<number> {
+    return await this.siblingRepository.delete(siblingId1, siblingId2)
   }
 }

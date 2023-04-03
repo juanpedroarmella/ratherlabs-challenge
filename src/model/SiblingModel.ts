@@ -15,18 +15,18 @@ export class SiblingModel extends Model {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true
   })
-    studentId!: number
+    siblingId1!: number
 
   @ForeignKey(() => StudentModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true
   })
-    siblingId!: number
+    siblingId2!: number
 
-  @BelongsTo(() => StudentModel, 'studentId')
+  @BelongsTo(() => StudentModel, 'siblingId1')
     student!: typeof StudentModel
 
-  @BelongsTo(() => StudentModel, 'siblingId')
+  @BelongsTo(() => StudentModel, 'siblingId2')
     sibling!: typeof StudentModel
 }
