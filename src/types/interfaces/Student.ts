@@ -20,5 +20,5 @@ export interface AddStudentRequest {
   age: number
   gender: 'male' | 'female' | 'other'
   roomId: number
-  siblings: number[]
+  siblings: Student[]
 }

@@ -1,4 +1,6 @@
-import RootContainer from '@/atoms/RootContainer'
+import LoadingIndicator from '@/components/atoms/LoadingIndicator'
+import RootContainer from '@/components/atoms/RootContainer'
+import useFetch from '@/hooks/useFetch'
 import type {
   GetStudentByIdResponse,
   Student
@@ -13,36 +15,35 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import Link from 'next/link'
 import type { GetServerSideProps, NextPage } from 'next/types'
 
-export const getServerSideProps: GetServerSideProps<StudentProps> = async (
+export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const id = context?.params?.id as string
+  const idStudent = context?.params?.id as string
+  const apiUrl = process.env.API_URL as string
+  return { props: { apiUrl, idStudent } }
+}
 
-  try {
-    const apiUrl = process.env.API_URL as string
-    const res = await axios.get(`${apiUrl}/student/${id}`)
-    const student: GetStudentByIdResponse = res.data
-    return { props: { student } }
-  } catch (e) {
-    const error = e.message
-    return { props: { error } }
+interface Props {
+  apiUrl: string
+  idStudent: string
+}
+
+const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
+  const { isLoading, data, error } = useFetch<GetStudentByIdResponse>(
+    `${apiUrl}/student/${idStudent}`
+  )
+
+  if (isLoading) {
+    return <LoadingIndicator />
   }
-}
 
-interface StudentProps {
-  student?: GetStudentByIdResponse
-  error?: string
-}
-
-const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
-  if (error !== undefined) {
+  if (error !== null) {
     return (
       <RootContainer component='main'>
-        <Alert severity='error'>{error}</Alert>
+        <Alert severity='error'>{error.message}</Alert>
       </RootContainer>
     )
   }
@@ -64,9 +65,9 @@ const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>{student?.student.name}</TableCell>
-                <TableCell>{student?.student.age}</TableCell>
-                <TableCell>{student?.student.gender}</TableCell>
+                <TableCell>{data?.student.name}</TableCell>
+                <TableCell>{data?.student.age}</TableCell>
+                <TableCell>{data?.student.gender}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -77,7 +78,7 @@ const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
         <Typography variant='h5' textAlign='start' mb={2}>
           Siblings
         </Typography>
-        {(student != null) && student?.siblings?.length > 0
+        {data != null && data?.siblings?.length > 0
           ? (
             <TableContainer component={Paper}>
               <Table>
@@ -87,7 +88,7 @@ const StudentPage: NextPage<StudentProps> = ({ student, error }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {student?.siblings.map((student: Student) => (
+                  {data?.siblings.map((student: Student) => (
                     <TableRow key={`${student.name}-${student.id}`}>
                       <TableCell scope='row'>
                         <Typography

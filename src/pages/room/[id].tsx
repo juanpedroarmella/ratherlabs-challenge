@@ -1,4 +1,6 @@
-import RootContainer from '@/atoms/RootContainer'
+import LoadingIndicator from '@/components/atoms/LoadingIndicator'
+import RootContainer from '@/components/atoms/RootContainer'
+import useFetch from '@/hooks/useFetch'
 import type { GetRoomByIdResponse } from '@/types/interfaces/Room'
 import type { Student } from '@/types/interfaces/Student'
 import Alert from '@mui/material/Alert'
@@ -11,27 +13,42 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import Link from 'next/link'
 import type { GetServerSideProps, NextPage } from 'next/types'
 
-interface RoomProps {
-  room?: GetRoomByIdResponse
-  error?: string
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const idRoom = context?.params?.id as string
+  const apiUrl = process.env.API_URL as string
+  return { props: { apiUrl, idRoom } }
 }
 
-const Room: NextPage = ({ room, error }: RoomProps) => {
-  if (error !== undefined) {
+interface Props {
+  apiUrl: string
+  idRoom: string
+}
+
+const Room: NextPage<Props> = ({ apiUrl, idRoom }) => {
+  const { isLoading, data, error } = useFetch<GetRoomByIdResponse>(
+    `${apiUrl}/room/${idRoom}`
+  )
+
+  if (isLoading) {
+    return <LoadingIndicator />
+  }
+
+  if (error !== null) {
     return (
       <RootContainer component='main'>
-        <Alert severity='error'>{error}</Alert>
+        <Alert severity='error'>{error.message}</Alert>
       </RootContainer>
     )
   }
 
   return (
     <RootContainer component='main'>
-      <Typography variant='h5'>{room?.roomName}</Typography>
+      <Typography variant='h5'>{data?.roomName}</Typography>
       <Box display='flex' flexDirection='column' alignItems='flex-start'>
         <TableContainer component={Paper}>
           <Table>
@@ -41,7 +58,7 @@ const Room: NextPage = ({ room, error }: RoomProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {room?.students.map((student: Student) => (
+              {data?.students.map((student: Student) => (
                 <TableRow key={`${student.name}-${student.id}`}>
                   <TableCell scope='row'>
                     <Typography
@@ -60,21 +77,4 @@ const Room: NextPage = ({ room, error }: RoomProps) => {
     </RootContainer>
   )
 }
-
-export const getServerSideProps: GetServerSideProps<RoomProps> = async (
-  context
-) => {
-  const id = context?.params?.id as string
-
-  try {
-    const apiUrl = process.env.API_URL as string
-    const res = await axios.get(`${apiUrl}/room/${id}`)
-    const room: GetRoomByIdResponse = res.data
-    return { props: { room } }
-  } catch (e) {
-    const error = e.message
-    return { props: { error } }
-  }
-}
-
 export default Room
