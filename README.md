@@ -22,8 +22,6 @@ Start dependencies and build the proyect:
 
 yarn install
 yarn build
-yarn initdb
-yarn start
 ```
 
 Insert random data to the db:
