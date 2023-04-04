@@ -82,7 +82,8 @@ const EditRoom: NextPage<Props> = ({ apiUrl }): JSX.Element => {
               variant='contained'
               color='primary'
               type='submit'
-              disabled={isLoading}>
+              disabled={isLoading}
+            >
               {isLoading ? 'Loading...' : 'Submit'}
             </Button>
           </Grid>

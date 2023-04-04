@@ -1,9 +1,10 @@
 import RootContainer from '@/components/atoms/RootContainer'
 import SelectRoom from '@/components/selects/SelectRoom'
-import SelectStudents from '@/components/selects/SelectStudent'
+import SelectStudent from '@/components/selects/SelectStudent'
 import SelectSiblings from '@/components/tenant/new-student/SelectSiblings'
 import SiblingsList from '@/components/tenant/new-student/SiblingsList'
 import useSnackBar from '@/hooks/useSnackBar'
+import { StudentModel } from '@/model/StudentModel'
 import type { Student } from '@/types/interfaces/Student'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
@@ -25,6 +26,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 const voidForm: Student = {
+  id: 0,
   name: '',
   age: 0,
   gender: 'other',
@@ -32,10 +34,14 @@ const voidForm: Student = {
   siblings: []
 }
 
-const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
+const EditStudent: NextPage<PageProps> = ({ apiUrl }) => {
   const [studentData, setStudentData] = useState<Student>(voidForm)
+
   const [isLoading, setIsLoading] = useState(false)
+
   const { Snackbar, openSnackbar } = useSnackBar()
+
+  const [selectedStudent, setSelectedStudent] = useState<string>('')
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target
@@ -46,28 +52,52 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
     }))
   }
 
+  const handleChangeSelectStudent = async (
+    event: ChangeEvent<HTMLInputElement>,
+    data: Student[]
+  ): Promise<void> => {
+    const { value } = event.target
+    const findStudent = data?.find(
+      (student) => (student.id as number).toString() == value
+    )
+    if (findStudent != null) {
+      const studentDetail = await axios.get(
+        `${apiUrl}/student/${findStudent.id}`
+      )
+      setStudentData({ ...findStudent, siblings: studentDetail.data.siblings })
+      setSelectedStudent(value)
+    }
+  }
+
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault()
     setIsLoading(true)
     try {
-      await axios.post(`${apiUrl}/students`, studentData)
+      await axios.put(`${apiUrl}/student/${studentData.id}/`, studentData)
       setStudentData(voidForm)
-      openSnackbar('success', 'Student created')
+      openSnackbar('success', 'Student edited')
     } catch (error) {
-      console.log(error)
-      openSnackbar('error', error.response.data.message)
+      openSnackbar('error', error.message)
     }
     setIsLoading(false)
   }
 
   return (
     <RootContainer component='main'>
-      <Typography variant='h4'>Add Student</Typography>
+      <Typography variant='h4'>Edit a student</Typography>
 
       <form onSubmit={handleSubmit} style={{ width: '50%' }}>
         <Grid container direction='column' spacing={2}>
+          <Grid item>
+            <SelectStudent
+              handleChange={handleChangeSelectStudent}
+              selectedStudent={selectedStudent}
+              apiUrl={apiUrl}
+            />
+          </Grid>
+
           <Grid item>
             <TextField
               fullWidth
@@ -143,4 +173,4 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
   )
 }
 
-export default NewStudent
+export default EditStudent

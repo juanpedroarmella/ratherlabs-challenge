@@ -15,7 +15,7 @@ export const insertData = async (): Promise<void> => {
       Array.from({ length: 50 }).map(async (_, index: number) => {
         const name = `Student ${index + 1}`
         const age = Math.floor(Math.random() * 18) + 5
-        const gender = Math.floor(Math.random()) === 0 ? 'Male' : 'Female'
+        const gender = Math.floor(Math.random()) === 0 ? 'male' : 'female'
         const roomId =
           rooms[Math.floor(Math.random() * rooms.length - 1) + 1].id
         return await StudentModel.create({ name, age, gender, roomId })

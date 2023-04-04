@@ -1,4 +1,4 @@
-import { AddStudentRequest, Student } from '@/types/interfaces/Student'
+import { Student } from '@/types/interfaces/Student'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction } from 'react'
 
 interface SiblingListProps {
   siblings: Student[]
-  setStudentData: Dispatch<SetStateAction<AddStudentRequest>>
+  setStudentData: Dispatch<SetStateAction<Student>>
 }
 
 const SiblingsList: React.FC<SiblingListProps> = ({

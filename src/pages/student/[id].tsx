@@ -1,10 +1,7 @@
 import LoadingIndicator from '@/components/atoms/LoadingIndicator'
 import RootContainer from '@/components/atoms/RootContainer'
 import useFetch from '@/hooks/useFetch'
-import type {
-  GetStudentByIdResponse,
-  Student
-} from '@/types/interfaces/Student'
+import type { Student } from '@/types/interfaces/Student'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
@@ -32,7 +29,7 @@ interface Props {
 }
 
 const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
-  const { isLoading, data, error } = useFetch<GetStudentByIdResponse>(
+  const { isLoading, data, error } = useFetch<Student>(
     `${apiUrl}/student/${idStudent}`
   )
 
@@ -65,9 +62,9 @@ const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>{data?.student.name}</TableCell>
-                <TableCell>{data?.student.age}</TableCell>
-                <TableCell>{data?.student.gender}</TableCell>
+                <TableCell>{data?.name}</TableCell>
+                <TableCell>{data?.age}</TableCell>
+                <TableCell>{data?.gender}</TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -78,7 +75,7 @@ const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
         <Typography variant='h5' textAlign='start' mb={2}>
           Siblings
         </Typography>
-        {data != null && data?.siblings?.length > 0
+        {(data != null) && (data.siblings != null) && data.siblings.length > 0
           ? (
             <TableContainer component={Paper}>
               <Table>
@@ -88,7 +85,7 @@ const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {data?.siblings.map((student: Student) => (
+                  {data.siblings.map((student: Student) => (
                     <TableRow key={`${student.name}-${student.id}`}>
                       <TableCell scope='row'>
                         <Typography

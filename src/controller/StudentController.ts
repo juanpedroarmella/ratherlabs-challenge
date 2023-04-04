@@ -38,33 +38,38 @@ const studentController = async (
           roomId,
           siblings
         )
-        if (studentAffected.updatedStudentRows === 0) {
-          res.status(404).end(`Student with id ${id} not found`)
+        if (studentAffected.updatedStudentCount[0] === 0) {
+          res.status(404).end()
         } else {
           res.status(204).end()
         }
       } catch (error) {
-        res.status(500).end('Internal server error')
+        if (error.errors[0].type === 'Validation error') {
+          res.status(422).json({ message: error.errors[0].message })
+        } else {
+          res.status(500).json({ message: 'Internal server error' })
+        }
       }
       break
     }
     case 'GET': {
       try {
         const id = parseInt(req.query.id as string)
+
         if (Number.isNaN(id)) {
           const errorMessage = `Invalid id: ${req.query.id as string}`
-          throw new Error(errorMessage)
+          res.status(400).end(errorMessage)
         }
+
         const student = await studentService.getStudentById(id)
         student != null ? res.status(200).json(student) : res.status(404).end()
       } catch (error) {
         res.status(500).end('Internal server error')
-        console.log(error)
       }
       break
     }
     default:
-      res.setHeader('Allow', ['POST', 'PUT'])
+      res.setHeader('Allow', ['GET', 'PUT'])
       res.status(405).end('Method not allowed')
   }
 }

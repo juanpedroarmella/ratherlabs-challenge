@@ -25,7 +25,14 @@ export class StudentModel extends Model {
 
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      isGreaterThanThree (value: number) {
+        if (value < 3) {
+          throw new Error('Age must be greater than 3')
+        }
+      }
+    }
   })
     age!: number
 
@@ -33,7 +40,7 @@ export class StudentModel extends Model {
     type: DataTypes.STRING,
     allowNull: false
   })
-    gender!: string
+    gender!: 'male' | 'female' | 'other'
 
   @ForeignKey(() => RoomModel)
   @Column({

@@ -23,15 +23,20 @@ export class SiblingService {
     return await this.siblingRepository.update(studentId, siblingId)
   }
 
-  async editAllSiblings (
+  async updateOrAddSiblings (
     studentId: number,
-    siblings: number[]
+    siblings: Student[]
   ): Promise<number> {
-    const siblingUpdates = siblings.map(async (siblingId) => {
+    const siblingUpdates = siblings.map(async (student) => {
       const [affectedRows] = await this.siblingRepository.update(
         studentId,
-        siblingId
+        student.id as number
       )
+
+      if (affectedRows === 0) {
+        await this.createSibling(studentId, student.id as number)
+        return 1
+      }
       return affectedRows
     })
 
@@ -40,7 +45,7 @@ export class SiblingService {
       0
     )
 
-    return updatedSiblingsRows[0]
+    return updatedSiblingsRows
   }
 
   async findAllById (id: number): Promise<Student[] | []> {

@@ -35,28 +35,11 @@ export default async function studentController (
         )
         res.status(201).json(newStudent)
       } catch (error) {
-        res.status(500).end('Internal server error')
-      }
-      break
-    }
-    case 'PUT': {
-      try {
-        const { id, name, age, gender, roomId, siblings } = req.body
-        const editStudentResponse = await studentService.editStudent(
-          id,
-          name,
-          age,
-          gender,
-          roomId,
-          siblings
-        )
-        if (editStudentResponse.updatedStudentRows === 0) {
-          res.status(404).end('Not found')
+        if (error.errors[0].type === 'Validation error') {
+          res.status(422).json({ message: error.errors[0].message })
         } else {
-          res.status(204).end()
+          res.status(500).json({ message: 'Internal server error' })
         }
-      } catch (error) {
-        res.status(500).end('Internal server error')
       }
       break
     }
@@ -65,12 +48,12 @@ export default async function studentController (
         const students = await studentService.getAllStudents()
         res.status(200).json(students)
       } catch (error) {
-        res.status(500).end('Internal server error')
+        res.status(500).json({ message: 'Internal server error' })
       }
       break
     }
     default:
-      res.setHeader('Allow', ['POST', 'PUT'])
+      res.setHeader('Allow', ['POST', 'GET'])
       res.status(405).end('Method not allowed')
   }
 }

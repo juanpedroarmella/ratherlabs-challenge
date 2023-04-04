@@ -1,4 +1,4 @@
-import { GetStudentByIdResponse, Student } from './../types/interfaces/Student'
+import { Student } from './../types/interfaces/Student'
 import { StudentModel } from '../model/StudentModel'
 import { StudentRepository } from '@/repository/StudentRepository'
 import { EditStudentResponse } from '@/types/interfaces/Student'
@@ -24,7 +24,7 @@ export class StudentService {
       roomId
     )
     siblings.map(async (sibling: Student) => {
-      await this.siblingService.createSibling(student.id, sibling.id)
+      await this.siblingService.createSibling(student.id, sibling.id as number)
     })
     return student
   }
@@ -35,9 +35,9 @@ export class StudentService {
     age: number,
     gender: string,
     roomId: number,
-    siblings: number[] = []
+    siblings: Student[]
   ): Promise<EditStudentResponse> {
-    const [updatedStudentRows] = await this.studentRepository.update(
+    const updatedStudentCount = await this.studentRepository.update(
       id,
       name,
       age,
@@ -45,26 +45,57 @@ export class StudentService {
       roomId
     )
 
-    const updatedSiblingsRows = await this.siblingService.editAllSiblings(
+    const deletedSiblingsCount = await this.deleteOldSiblings(id, siblings)
+
+    const updatedSiblingsCount = await this.siblingService.updateOrAddSiblings(
       id,
       siblings
     )
 
-    return { updatedStudentRows, updatedSiblingsRows }
+    return {
+      updatedStudentCount,
+      updatedSiblingsCount,
+      deletedSiblingsCount
+    }
   }
 
   async getAllStudents (): Promise<StudentModel[]> {
     return await this.studentRepository.getAll()
   }
 
-  async getStudentById (id: number): Promise<GetStudentByIdResponse | null> {
+  async getStudentById (id: number): Promise<Student | null> {
     const student = await this.studentRepository.findById(id)
     if (student != null) {
       const siblings = await this.siblingService.findAllById(id)
 
-      return { student, siblings }
+      return {
+        id: student.id,
+        name: student.name,
+        age: student.age,
+        gender: student.gender,
+        roomId: student.roomId,
+        siblings
+      }
     }
 
     return null
+  }
+
+  async deleteOldSiblings (id: number, siblings: Student[]): Promise<number> {
+    const oldSiblingsArr = await this.siblingService.findAllById(id)
+
+    const newSiblingsIds = siblings.map((sibling) => sibling.id)
+
+    const siblingsToDelete = oldSiblingsArr.filter(
+      (sibling: Student) => !newSiblingsIds.includes(sibling.id)
+    )
+
+    const deletedSiblingsCount = await Promise.all(
+      siblingsToDelete.map(async (sibling) =>
+        await this.siblingService.deleteSibling(id, sibling.id as number)
+      )
+    ).then((results) => results.length)
+
+    return deletedSiblingsCount
   }
 }

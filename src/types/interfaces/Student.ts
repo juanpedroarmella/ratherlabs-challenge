@@ -1,24 +1,13 @@
-import { StudentModel } from '@/model/StudentModel'
-
 export interface Student {
-  id: number
+  id?: number
   name: string
+  age?: number
+  gender?: 'male' | 'female' | 'other'
+  roomId?: number
+  siblings?: Student[]
 }
-
-export interface GetStudentByIdResponse {
-  student: StudentModel
-  siblings: Student[]
-}
-
 export interface EditStudentResponse {
-  updatedStudentRows: number
-  updatedSiblingsRows: number
-}
-
-export interface AddStudentRequest {
-  name: string
-  age: number
-  gender: 'male' | 'female' | 'other'
-  roomId: number
-  siblings: Student[]
+  updatedStudentCount: [number]
+  deletedSiblingsCount: number
+  updatedSiblingsCount: number
 }
