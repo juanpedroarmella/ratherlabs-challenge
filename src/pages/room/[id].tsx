@@ -11,14 +11,14 @@ import type { GetServerSideProps, NextPage } from 'next/types'
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const idRoom = context?.params?.id as string
+  const idRoom = parseInt(context?.params?.id as string)
   const apiUrl = process.env.API_URL as string
   return { props: { apiUrl, idRoom } }
 }
 
 interface Props {
   apiUrl: string
-  idRoom: string
+  idRoom: number
 }
 
 const Room: NextPage<Props> = ({ apiUrl, idRoom }) => {
@@ -40,7 +40,7 @@ const Room: NextPage<Props> = ({ apiUrl, idRoom }) => {
 
   return (
     <RootContainer component='main'>
-      <Typography variant='h5'>{data?.roomName}</Typography>
+      <Typography variant='h5'>{data?.room.name}</Typography>
       <Box display='flex' flexDirection='column' alignItems='flex-start'>
         <StudentsList students={data?.students as []} />
       </Box>

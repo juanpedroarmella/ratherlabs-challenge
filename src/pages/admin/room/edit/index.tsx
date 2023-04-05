@@ -9,6 +9,8 @@ import type { GetServerSideProps, NextPage } from 'next/types'
 import useSnackBar from '@/hooks/useSnackBar'
 import SelectRoom from '@/components/selects/SelectRoom'
 import axios from 'axios'
+import { EditRoomRequest } from '@/types/interfaces/Room'
+import Alert from '@mui/material/Alert'
 
 interface Props {
   apiUrl: string
@@ -19,19 +21,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   return { props: { apiUrl } }
 }
 
-const voidForm = {
+const voidForm: EditRoomRequest = {
   name: '',
-  roomId: 0
+  id: 0
 }
 
 const EditRoom: NextPage<Props> = ({ apiUrl }): JSX.Element => {
-  const [room, setRoom] = useState<typeof voidForm>(voidForm)
+  const [room, setRoom] = useState<EditRoomRequest>(voidForm)
   const [isLoading, setIsLoading] = useState(false)
   const { Snackbar, openSnackbar } = useSnackBar()
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target
-
     setRoom((prevRoom) => ({
       ...prevRoom,
       [name]: value
@@ -44,11 +45,10 @@ const EditRoom: NextPage<Props> = ({ apiUrl }): JSX.Element => {
     event.preventDefault()
     setIsLoading(true)
     try {
-      await axios.put(`${apiUrl}/room/${room.roomId}`, room)
+      await axios.put(`${apiUrl}/room/${room.id}`, room)
       setRoom(voidForm)
       openSnackbar('success', 'Room updated')
     } catch (error) {
-      console.error(error)
       setIsLoading(false)
       openSnackbar('error', error.message)
     }
@@ -59,34 +59,44 @@ const EditRoom: NextPage<Props> = ({ apiUrl }): JSX.Element => {
     <RootContainer component='main'>
       <Typography variant='h4'>Edit Room</Typography>
 
-      <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+      <form onSubmit={handleSubmit} style={{ width: '40%' }}>
         <Grid container direction='column' spacing={2}>
           <SelectRoom
-            roomId={room.roomId}
-            handleChange={handleChange}
+            setRoomName={setRoom}
+            handleChange={handleNameChange}
             apiUrl={apiUrl}
+            inputName='id'
           />
+          {room.id === 0
+            ? (
+              <Grid item>
+                <Alert severity='info'>No room selected</Alert>
+              </Grid>
+              )
+            : (
+              <>
+                <Grid item>
+                  <TextField
+                    label='Name'
+                    name='name'
+                    value={room.name}
+                    onChange={handleNameChange}
+                    required
+                  />
+                </Grid>
 
-          <Grid item>
-            <TextField
-              label='Name'
-              name='name'
-              value={room.name}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-
-          <Grid item>
-            <Button
-              variant='contained'
-              color='primary'
-              type='submit'
-              disabled={isLoading}
-            >
-              {isLoading ? 'Loading...' : 'Submit'}
-            </Button>
-          </Grid>
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    type='submit'
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Loading...' : 'Submit'}
+                  </Button>
+                </Grid>
+              </>
+              )}
         </Grid>
       </form>
 

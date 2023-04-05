@@ -19,4 +19,8 @@ export class RoomRepository {
     const result = await RoomModel.update({ name }, { where: { id } })
     return result
   }
+
+  async delete (id: number): Promise<number> {
+    return await RoomModel.destroy({ where: { id } })
+  }
 }

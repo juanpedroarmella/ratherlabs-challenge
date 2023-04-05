@@ -1,9 +1,12 @@
+import { RoomRepository } from '@/repository/RoomRepository'
 import sync from '@/db/sync'
 import { SiblingRepository } from '@/repository/SiblingRepository'
 import { StudentRepository } from '@/repository/StudentRepository'
 import { SiblingService } from '@/service/SiblingService'
 import { StudentService } from '@/service/StudentService'
 import { NextApiRequest, NextApiResponse } from 'next'
+import handlePutStudent from './handlers/handlePutStudent'
+import { RoomService } from '@/service/RoomService'
 
 const studentController = async (
   req: NextApiRequest,
@@ -15,41 +18,22 @@ const studentController = async (
 
   const studentRepository = new StudentRepository()
 
+  const roomService = new RoomService(new RoomRepository(), studentRepository)
+
   const siblingService = new SiblingService(
     siblingRepository,
     studentRepository
   )
 
-  const studentService = new StudentService(studentRepository, siblingService)
+  const studentService = new StudentService(
+    studentRepository,
+    siblingService,
+    roomService
+  )
 
   switch (req.method) {
     case 'PUT': {
-      try {
-        const id = parseInt(req.query.id as string)
-        const { name, age, gender, roomId, siblings } = req.body
-        if (Number.isNaN(id)) {
-          throw new Error('Invalid id')
-        }
-        const studentAffected = await studentService.editStudent(
-          id,
-          name,
-          age,
-          gender,
-          roomId,
-          siblings
-        )
-        if (studentAffected.updatedStudentCount[0] === 0) {
-          res.status(404).end()
-        } else {
-          res.status(204).end()
-        }
-      } catch (error) {
-        if (error.errors[0].type === 'Validation error') {
-          res.status(422).json({ message: error.errors[0].message })
-        } else {
-          res.status(500).json({ message: 'Internal server error' })
-        }
-      }
+      await handlePutStudent(req, res, studentService)
       break
     }
     case 'GET': {
@@ -62,8 +46,23 @@ const studentController = async (
         }
 
         const student = await studentService.getStudentById(id)
+
         student != null ? res.status(200).json(student) : res.status(404).end()
       } catch (error) {
+        res.status(500).end('Internal server error')
+      }
+      break
+    }
+    case 'DELETE': {
+      const id = parseInt(req.query.id as string)
+      try {
+        const deletedCount = await studentService.deleteStudent(id)
+        if (deletedCount === 0) {
+          res.status(404).end()
+        } else {
+          res.status(200).json({ deletedCount })
+        }
+      } catch (e) {
         res.status(500).end('Internal server error')
       }
       break

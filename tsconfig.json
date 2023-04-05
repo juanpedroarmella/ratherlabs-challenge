@@ -16,7 +16,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "strictNullChecks": true,
-
     "jsx": "preserve",
     "paths": {
       "@/*": ["./src/*"]

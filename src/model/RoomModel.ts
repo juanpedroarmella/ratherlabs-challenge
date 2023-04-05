@@ -17,6 +17,9 @@ export class RoomModel extends Model {
   })
     name!: string
 
-  @HasMany(() => StudentModel, 'roomId')
+  @HasMany(() => StudentModel, {
+    foreignKey: 'roomId',
+    onDelete: 'SET NULL'
+  })
     students!: Array<typeof StudentModel>
 }

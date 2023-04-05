@@ -1,4 +1,7 @@
-import { GetRoomByIdResponse } from './../types/interfaces/Room'
+import {
+  GetAllRoomsResponse,
+  GetRoomByIdResponse
+} from './../types/interfaces/Room'
 import { StudentRepository } from './../repository/StudentRepository'
 import { RoomModel } from '../model/RoomModel'
 import { RoomRepository } from '@/repository/RoomRepository'
@@ -30,7 +33,10 @@ export class RoomService {
       }))
 
       return {
-        roomName: room.name,
+        room: {
+          name: room.name,
+          id: room.id
+        },
         students: studentsWithIdAndName
       }
     }
@@ -38,7 +44,11 @@ export class RoomService {
     return null
   }
 
-  async findAll (): Promise<RoomModel[]> {
-    return await this.roomRepository.findAll()
+  async findAll (): Promise<GetAllRoomsResponse> {
+    return { rooms: await this.roomRepository.findAll() }
+  }
+
+  async deleteRoom (id: number): Promise<number> {
+    return await this.roomRepository.delete(id)
   }
 }

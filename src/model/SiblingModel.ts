@@ -24,9 +24,15 @@ export class SiblingModel extends Model {
   })
     siblingId2!: number
 
-  @BelongsTo(() => StudentModel, 'siblingId1')
+  @BelongsTo(() => StudentModel, {
+    onDelete: 'CASCADE',
+    foreignKey: 'siblingId1'
+  })
     student!: typeof StudentModel
 
-  @BelongsTo(() => StudentModel, 'siblingId2')
+  @BelongsTo(() => StudentModel, {
+    onDelete: 'CASCADE',
+    foreignKey: 'siblingId2'
+  })
     sibling!: typeof StudentModel
 }

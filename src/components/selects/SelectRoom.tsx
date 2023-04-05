@@ -1,24 +1,59 @@
 import LoadingIndicator from '@/components/atoms/LoadingIndicator'
 import useFetch from '@/hooks/useFetch'
-import { Room } from '@/types/interfaces/Room'
+import {
+  EditRoomRequest,
+  GetAllRoomsResponse,
+  Room
+} from '@/types/interfaces/Room'
 import { Alert, Box } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
-import { ChangeEvent } from 'react'
+import { ChangeEvent, SetStateAction, useState } from 'react'
 
 interface SelectRoomProps {
-  roomId: number
+  inputName: string
   handleChange: (event: ChangeEvent<HTMLInputElement>) => void
   apiUrl: string
+  setRoomName?: (value: SetStateAction<EditRoomRequest>) => void
+  initialValue?: Room | null
 }
 
 const SelectRoom: React.FC<SelectRoomProps> = ({
-  roomId,
+  inputName,
+  apiUrl,
   handleChange,
-  apiUrl
+  setRoomName,
+  initialValue
 }): JSX.Element => {
-  const { isLoading, data, error } = useFetch<Room[]>(`${apiUrl}/rooms`)
+  const {
+    isLoading,
+    data: rooms,
+    error
+  } = useFetch<GetAllRoomsResponse>(`${apiUrl}/rooms`)
+
+  const [roomSelected, setRoomSelected] = useState<Room>(
+    initialValue ?? {
+      id: 0,
+      name: ''
+    }
+  )
+
+  const handleSelectChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const { value } = event.target
+    const room = rooms?.rooms.find((room) => room.id === parseInt(value))
+    if (room != null) {
+      setRoomSelected(room)
+      if (setRoomName != null) {
+        setRoomName((prevRoom) => ({
+          ...prevRoom,
+          name: room.name
+        }))
+      }
+
+      handleChange(event)
+    }
+  }
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -40,12 +75,12 @@ const SelectRoom: React.FC<SelectRoomProps> = ({
         fullWidth
         select
         label='Room'
-        name='roomId'
-        value={roomId}
-        onChange={handleChange}
+        name={inputName}
+        value={roomSelected?.id}
+        onChange={handleSelectChange}
         required
       >
-        {data?.map((room) => {
+        {rooms?.rooms.map((room: Room) => {
           return (
             <MenuItem key={`${room.id}-${room.name}`} value={room.id}>
               {room.name}

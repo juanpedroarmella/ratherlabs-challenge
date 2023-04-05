@@ -30,11 +30,11 @@ export class SiblingService {
     const siblingUpdates = siblings.map(async (student) => {
       const [affectedRows] = await this.siblingRepository.update(
         studentId,
-        student.id as number
+        student.id
       )
 
       if (affectedRows === 0) {
-        await this.createSibling(studentId, student.id as number)
+        await this.createSibling(studentId, student.id)
         return 1
       }
       return affectedRows

@@ -1,4 +1,8 @@
-import { Student } from '@/types/interfaces/Student'
+import {
+  EditStudentRequest,
+  NewStudentRequest,
+  Student
+} from '@/types/interfaces/Student'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -14,13 +18,23 @@ import { Dispatch, SetStateAction } from 'react'
 
 interface SiblingListProps {
   siblings: Student[]
-  setStudentData: Dispatch<SetStateAction<Student>>
+  setStudentData: Dispatch<
+  SetStateAction<NewStudentRequest | EditStudentRequest>
+  >
 }
 
 const SiblingsList: React.FC<SiblingListProps> = ({
   siblings,
   setStudentData
 }) => {
+  const handleRemoveClick = (student: Student): void => {
+    const newSiblings = siblings.filter((sibling) => sibling.id !== student.id)
+    setStudentData((prevStudentData) => ({
+      ...prevStudentData,
+      siblings: newSiblings
+    }))
+  }
+
   if (siblings.length === 0) {
     return (
       <Box m={2}>
@@ -50,15 +64,7 @@ const SiblingsList: React.FC<SiblingListProps> = ({
                   <Button
                     variant='outlined'
                     size='small'
-                    onClick={() => {
-                      const newSiblings = siblings.filter(
-                        (sibling) => sibling.id !== student.id
-                      )
-                      setStudentData((prevStudentData) => ({
-                        ...prevStudentData,
-                        siblings: newSiblings
-                      }))
-                    }}
+                    onClick={() => handleRemoveClick(student)}
                   >
                     Remove
                   </Button>

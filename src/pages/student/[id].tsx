@@ -1,7 +1,10 @@
 import LoadingIndicator from '@/components/atoms/LoadingIndicator'
 import RootContainer from '@/components/atoms/RootContainer'
 import useFetch from '@/hooks/useFetch'
-import type { Student } from '@/types/interfaces/Student'
+import type {
+  GetStudentByIdResponse,
+  Student
+} from '@/types/interfaces/Student'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
@@ -14,22 +17,23 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import Link from 'next/link'
 import type { GetServerSideProps, NextPage } from 'next/types'
+import Image from 'next/image'
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const idStudent = context?.params?.id as string
+  const idStudent = parseInt(context?.params?.id as string)
   const apiUrl = process.env.API_URL as string
   return { props: { apiUrl, idStudent } }
 }
 
 interface Props {
   apiUrl: string
-  idStudent: string
+  idStudent: number
 }
 
 const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
-  const { isLoading, data, error } = useFetch<Student>(
+  const { isLoading, data, error } = useFetch<GetStudentByIdResponse>(
     `${apiUrl}/student/${idStudent}`
   )
 
@@ -55,6 +59,7 @@ const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>Profile Image</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Age</TableCell>
                 <TableCell>Gender</TableCell>
@@ -62,6 +67,20 @@ const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
             </TableHead>
             <TableBody>
               <TableRow>
+                <TableCell>
+                  {data?.profileImage != null && (
+                    <Image
+                      src={`data:image/${
+                        data.profileImage.ext
+                      };base64,${Buffer.from(
+                        data.profileImage.data.data
+                      ).toString('base64')}`}
+                      alt='Profile Image'
+                      width={50}
+                      height={50}
+                    />
+                  )}
+                </TableCell>
                 <TableCell>{data?.name}</TableCell>
                 <TableCell>{data?.age}</TableCell>
                 <TableCell>{data?.gender}</TableCell>
@@ -75,7 +94,7 @@ const StudentPage: NextPage<Props> = ({ apiUrl, idStudent }) => {
         <Typography variant='h5' textAlign='start' mb={2}>
           Siblings
         </Typography>
-        {(data != null) && (data.siblings != null) && data.siblings.length > 0
+        {data != null && data.siblings != null && data.siblings.length > 0
           ? (
             <TableContainer component={Paper}>
               <Table>

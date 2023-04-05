@@ -7,6 +7,7 @@ import {
 } from 'sequelize-typescript'
 import { DataTypes } from 'sequelize'
 import { RoomModel } from './RoomModel'
+import { Blob } from 'buffer'
 
 @Table({ tableName: 'students' })
 export class StudentModel extends Model {
@@ -42,13 +43,22 @@ export class StudentModel extends Model {
   })
     gender!: 'male' | 'female' | 'other'
 
+  @Column({
+    type: DataTypes.BLOB,
+    allowNull: false
+  })
+    profileImage!: Blob
+
   @ForeignKey(() => RoomModel)
   @Column({
     type: DataTypes.INTEGER.UNSIGNED,
-    allowNull: false
+    allowNull: true
   })
     roomId!: number
 
-  @BelongsTo(() => RoomModel, 'roomId')
+  @BelongsTo(() => RoomModel, {
+    foreignKey: 'roomId',
+    onDelete: 'SET NULL'
+  })
     room!: typeof RoomModel
 }

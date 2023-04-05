@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { RoomModel } from '../model/RoomModel'
 import { SiblingModel } from '../model/SiblingModel'
 import { StudentModel } from '../model/StudentModel'
@@ -18,7 +20,18 @@ export const insertData = async (): Promise<void> => {
         const gender = Math.floor(Math.random()) === 0 ? 'male' : 'female'
         const roomId =
           rooms[Math.floor(Math.random() * rooms.length - 1) + 1].id
-        return await StudentModel.create({ name, age, gender, roomId })
+        const profileImageFilePath = path.join(
+          __dirname,
+          '/../../public/profile-pic.svg'
+        )
+        const profileImage = Buffer.from(fs.readFileSync(profileImageFilePath))
+        return await StudentModel.create({
+          name,
+          age,
+          gender,
+          roomId,
+          profileImage
+        })
       })
     )
 

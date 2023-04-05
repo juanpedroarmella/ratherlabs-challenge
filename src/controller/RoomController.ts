@@ -3,6 +3,7 @@ import { RoomRepository } from '@/repository/RoomRepository'
 import { StudentRepository } from '@/repository/StudentRepository'
 import { RoomService } from '@/service/RoomService'
 import { NextApiRequest, NextApiResponse } from 'next'
+import handleUpdateErrors from './handlers/handleUpdateErrors'
 
 const roomControllerId = async (
   req: NextApiRequest,
@@ -29,11 +30,7 @@ const roomControllerId = async (
         res.status(200).json({ updatedRows })
       }
     } catch (error) {
-      if (error.errors[0].type === 'Validation error') {
-        res.status(422).json({ message: error.errors[0].message })
-      } else {
-        res.status(500).json({ message: 'Internal server error' })
-      }
+      handleUpdateErrors(error, res)
     }
   } else if (req.method === 'GET') {
     const id = parseInt(req.query.id as string)
@@ -47,6 +44,19 @@ const roomControllerId = async (
       }
     } catch (err) {
       res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+  if (req.method === 'DELETE') {
+    const id = parseInt(req.query.id as string)
+    try {
+      const deletedCount = await roomService.deleteRoom(id)
+      if (deletedCount === 0) {
+        res.status(404).end()
+      } else {
+        res.status(200).json({ deletedCount })
+      }
+    } catch (e) {
+      res.status(500).end('Internal server error')
     }
   } else {
     res.status(405).end()

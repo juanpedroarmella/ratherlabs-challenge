@@ -1,7 +1,7 @@
 import LoadingIndicator from '@/components/atoms/LoadingIndicator'
 import RootContainer from '@/components/atoms/RootContainer'
 import useFetch from '@/hooks/useFetch'
-import type { Room } from '@/types/interfaces/Room'
+import type { GetAllRoomsResponse } from '@/types/interfaces/Room'
 import Alert from '@mui/material/Alert'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
@@ -24,7 +24,9 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ apiUrl }) => {
-  const { isLoading, data, error } = useFetch<Room[]>(`${apiUrl}/rooms`)
+  const { isLoading, data, error } = useFetch<GetAllRoomsResponse>(
+    `${apiUrl}/rooms`
+  )
 
   if (isLoading) {
     return <LoadingIndicator />
@@ -49,7 +51,7 @@ const Home: NextPage<Props> = ({ apiUrl }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((room) => (
+            {data?.rooms.map((room) => (
               <TableRow key={`${room.id}-${room.name}`}>
                 <TableCell scope='row'>
                   <Typography component={Link} href={`/room/${room.id}`}>

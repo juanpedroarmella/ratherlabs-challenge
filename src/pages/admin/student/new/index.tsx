@@ -1,16 +1,16 @@
+import ImageUploader from '@/components/atoms/ImageUploader'
 import RootContainer from '@/components/atoms/RootContainer'
 import SelectRoom from '@/components/selects/SelectRoom'
-import SelectStudents from '@/components/selects/SelectStudent'
-import SelectSiblings from '@/components/tenant/new-student/SelectSiblings'
-import SiblingsList from '@/components/tenant/new-student/SiblingsList'
+import handleNewStudentSubmit from '@/components/tenant/new-student/utils/handleNewStudentSubmit'
+import SelectSiblings from '@/components/selects/SelectSiblings'
+import SiblingsList from '@/components/selects/SiblingsList'
 import useSnackBar from '@/hooks/useSnackBar'
-import type { Student } from '@/types/interfaces/Student'
+import type { NewStudentRequest } from '@/types/interfaces/Student'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import axios from 'axios'
 import type { GetServerSideProps, NextPage } from 'next/types'
 import type { ChangeEvent, FormEvent } from 'react'
 import { useState } from 'react'
@@ -24,16 +24,17 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { apiUrl } }
 }
 
-const voidForm: Student = {
+const voidForm: NewStudentRequest = {
   name: '',
-  age: 0,
+  age: 3,
   gender: 'other',
   roomId: 0,
-  siblings: []
+  siblings: [],
+  profileImage: null
 }
 
 const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
-  const [studentData, setStudentData] = useState<Student>(voidForm)
+  const [studentData, setStudentData] = useState<NewStudentRequest>(voidForm)
   const [isLoading, setIsLoading] = useState(false)
   const { Snackbar, openSnackbar } = useSnackBar()
 
@@ -46,20 +47,25 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
     }))
   }
 
-  const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setIsLoading(true)
-    try {
-      await axios.post(`${apiUrl}/students`, studentData)
-      setStudentData(voidForm)
-      openSnackbar('success', 'Student created')
-    } catch (error) {
-      console.log(error)
-      openSnackbar('error', error.response.data.message)
+    if (studentData.roomId === 0) {
+      openSnackbar('error', 'You have to select a room')
+      return
     }
-    setIsLoading(false)
+
+    if (studentData.profileImage == null) {
+      openSnackbar('error', 'You have to select an image')
+      return
+    }
+    await handleNewStudentSubmit(
+      studentData,
+      setIsLoading,
+      setStudentData,
+      voidForm,
+      openSnackbar,
+      apiUrl
+    )
   }
 
   return (
@@ -109,21 +115,23 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
           </Grid>
 
           <SelectRoom
-            roomId={studentData.roomId as number}
-            handleChange={handleChange}
             apiUrl={apiUrl}
+            handleChange={handleChange}
+            inputName='roomId'
           />
 
           <SelectSiblings
-            siblings={studentData.siblings as []}
-            setStudentData={setStudentData}
             apiUrl={apiUrl}
+            setStudentData={setStudentData}
+            siblings={studentData.siblings}
           />
 
           <SiblingsList
-            siblings={studentData.siblings as []}
+            siblings={studentData.siblings}
             setStudentData={setStudentData}
           />
+
+          <ImageUploader setStudentData={setStudentData} />
 
           <Grid item>
             <Button
@@ -132,7 +140,7 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
               type='submit'
               disabled={isLoading}
             >
-              {isLoading ? 'Cargando...' : 'Enviar'}
+              {isLoading ? 'Loading...' : 'Submit'}
             </Button>
           </Grid>
         </Grid>

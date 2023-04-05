@@ -9,7 +9,12 @@ import { GetServerSideProps, NextPage } from 'next/types'
 import useSnackBar from '@/hooks/useSnackBar'
 import type { AddRoomRequest } from '@/types/interfaces/Room'
 
-const voidForm = {
+export const getServerSideProps: GetServerSideProps = async () => {
+  const apiUrl = process.env.API_URL
+  return { props: { apiUrl } }
+}
+
+const voidForm: AddRoomRequest = {
   name: ''
 }
 
@@ -22,7 +27,7 @@ const NewRoom: NextPage<NewRoomProps> = ({ apiUrl }): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false)
   const { Snackbar, openSnackbar } = useSnackBar()
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleNameChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target
     setRoom((prevRoom) => ({
       ...prevRoom,
@@ -58,7 +63,7 @@ const NewRoom: NextPage<NewRoomProps> = ({ apiUrl }): JSX.Element => {
               label='Name'
               name='name'
               value={room.name}
-              onChange={handleChange}
+              onChange={handleNameChange}
               required
             />
           </Grid>
@@ -79,11 +84,6 @@ const NewRoom: NextPage<NewRoomProps> = ({ apiUrl }): JSX.Element => {
       <>{Snackbar}</>
     </RootContainer>
   )
-}
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const apiUrl = process.env.API_URL
-  return { props: { apiUrl } }
 }
 
 export default NewRoom
