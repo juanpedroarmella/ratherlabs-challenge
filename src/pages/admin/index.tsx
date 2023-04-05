@@ -26,13 +26,18 @@ const Admin: NextPage = (): JSX.Element => {
         </Typography>
         <SectionLinks>
           <Link href='/admin/room/new'>
-            <Button variant='contained' color='primary'>
+            <Button variant='contained' color='success'>
               Create New Room
             </Button>
           </Link>
           <Link href='/admin/room/edit'>
-            <Button variant='contained' color='secondary'>
+            <Button variant='contained' color='info'>
               Edit Rooms
+            </Button>
+          </Link>
+          <Link href='/admin/room/delete'>
+            <Button variant='contained' color='error'>
+              Delete Rooms
             </Button>
           </Link>
         </SectionLinks>
@@ -44,13 +49,18 @@ const Admin: NextPage = (): JSX.Element => {
         </Typography>
         <SectionLinks>
           <Link href='/admin/student/new'>
-            <Button variant='contained' color='primary'>
+            <Button variant='contained' color='success'>
               Create New Student
             </Button>
           </Link>
           <Link href='/admin/student/edit'>
-            <Button variant='contained' color='secondary'>
+            <Button variant='contained' color='info'>
               Edit Students
+            </Button>
+          </Link>
+          <Link href='/admin/student/delete'>
+            <Button variant='contained' color='error'>
+              Delete Students
             </Button>
           </Link>
         </SectionLinks>

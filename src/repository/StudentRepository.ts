@@ -61,8 +61,6 @@ export class StudentRepository {
   }
 
   async delete (id: number): Promise<number> {
-    return await SiblingModel.destroy({
-      where: { [Op.or]: [{ siblingId1: id }, { siblingId2: id }] }
-    })
+    return await StudentModel.destroy({ where: { id } })
   }
 }
