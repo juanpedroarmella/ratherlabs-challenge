@@ -41,3 +41,7 @@ yarn start
 ## View online
 
 The proyect is deployed on Railway service: https://ratherlabs-challenge.up.railway.app/
+
+## API Documentation
+
+https://documenter.getpostman.com/view/21194639/2s93RXtqma
