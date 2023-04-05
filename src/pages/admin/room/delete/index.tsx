@@ -70,6 +70,7 @@ const DeleteRoom: NextPage<Props> = ({ apiUrl }): JSX.Element => {
             handleChange={handleNameChange}
             apiUrl={apiUrl}
             inputName='id'
+            key={`SelectRoom-${isLoading.toString()}`}
           />
           {room.id === 0
             ? (

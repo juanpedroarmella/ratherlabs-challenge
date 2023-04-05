@@ -83,6 +83,7 @@ const DeleteStudent: NextPage<Props> = ({ apiUrl }): JSX.Element => {
             <SelectStudent
               handleChange={handleChangeSelectStudent}
               apiUrl={apiUrl}
+              key={`SelectStudent-${isLoading.toString()}`}
             />
           </Grid>
           {student.id === 0

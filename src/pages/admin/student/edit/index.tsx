@@ -18,8 +18,8 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import axios from 'axios'
 import type { GetServerSideProps, NextPage } from 'next/types'
-import type { ChangeEvent, FormEvent } from 'react'
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
+
 import Image from 'next/image'
 import Paper from '@mui/material/Paper'
 import Alert from '@mui/material/Alert'
@@ -103,20 +103,22 @@ const EditStudent: NextPage<PageProps> = ({ apiUrl }) => {
   return (
     <RootContainer component='main'>
       <Typography variant='h4'>Edit a student</Typography>
-      <SelectStudent handleChange={handleChangeSelectStudent} apiUrl={apiUrl} />
+      <SelectStudent
+        handleChange={handleChangeSelectStudent}
+        apiUrl={apiUrl}
+        key={`SelectStudent-${isLoading.toString()}`}
+      />
 
-      {studentData.id === 0
-        ? (
-          <Alert severity='info'>No student selected</Alert>
-          )
-        : (
-          <form onSubmit={handleSubmit} style={{ width: '50%' }}>
-            <Grid container direction='column' spacing={2}>
-              {studentData?.profileImage !== null && (
-                <Grid item>
-                  <Paper sx={{ width: 'fit-content', p: 1 }}>
-                    <Image
-                      src={
+      {studentData.id === 0 ? (
+        <Alert severity='info'>No student selected</Alert>
+      ) : (
+        <form onSubmit={handleSubmit} style={{ width: '50%' }}>
+          <Grid container direction='column' spacing={2}>
+            {studentData?.profileImage !== null && (
+              <Grid item>
+                <Paper sx={{ width: 'fit-content', p: 1 }}>
+                  <Image
+                    src={
                       (studentData.profileImage as ImageInfo).data
                         ? `data:image/${
                             (studentData.profileImage as ImageInfo).ext
@@ -125,90 +127,93 @@ const EditStudent: NextPage<PageProps> = ({ apiUrl }) => {
                           ).toString('base64')}`
                         : URL.createObjectURL(studentData.profileImage as Blob)
                     }
-                      alt='Profile Image'
-                      width={100}
-                      height={100}
-                    />
-                  </Paper>
-                </Grid>
-              )}
-
-              <Grid item>
-                <TextField
-                  fullWidth
-                  label='Name'
-                  name='name'
-                  value={studentData.name}
-                  onChange={handleChange}
-                  required
-                />
+                    alt='Profile Image'
+                    width={100}
+                    height={100}
+                  />
+                </Paper>
               </Grid>
+            )}
 
-              <Grid item>
-                <TextField
-                  fullWidth
-                  label='Age'
-                  name='age'
-                  type='number'
-                  value={studentData.age}
-                  inputProps={{ min: 3 }}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-
-              <Grid item>
-                <TextField
-                  fullWidth
-                  select
-                  label='Gender'
-                  name='gender'
-                  value={studentData.gender}
-                  onChange={handleChange}
-                  required
-                >
-                  <MenuItem value='male'>Male</MenuItem>
-                  <MenuItem value='female'>Female</MenuItem>
-                  <MenuItem value='other'>Other</MenuItem>
-                </TextField>
-              </Grid>
-
-              <SelectRoom
-                handleChange={handleChange}
-                apiUrl={apiUrl}
-                inputName='roomId'
-                initialValue={{
-                  id: studentData.roomId as number,
-                  name: studentData.roomName as string
-                }}
+            <Grid item>
+              <TextField
+                fullWidth
+                label='Name'
+                name='name'
+                value={studentData.name}
+                onChange={handleChange}
+                required
               />
-
-              <SelectSiblings
-                siblings={studentData.siblings as []}
-                setStudentData={setStudentData}
-                apiUrl={apiUrl}
-              />
-
-              <SiblingsList
-                siblings={studentData.siblings as []}
-                setStudentData={setStudentData}
-              />
-
-              <ImageUploader setStudentData={setStudentData} />
-
-              <Grid item>
-                <Button
-                  variant='contained'
-                  color='primary'
-                  type='submit'
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Cargando...' : 'Enviar'}
-                </Button>
-              </Grid>
             </Grid>
-          </form>
-          )}
+
+            <Grid item>
+              <TextField
+                fullWidth
+                label='Age'
+                name='age'
+                type='number'
+                value={studentData.age}
+                inputProps={{ min: 3 }}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+
+            <Grid item>
+              <TextField
+                fullWidth
+                select
+                label='Gender'
+                name='gender'
+                value={studentData.gender}
+                onChange={handleChange}
+                required>
+                <MenuItem value='male'>Male</MenuItem>
+                <MenuItem value='female'>Female</MenuItem>
+                <MenuItem value='other'>Other</MenuItem>
+              </TextField>
+            </Grid>
+
+            <SelectRoom
+              handleChange={handleChange}
+              apiUrl={apiUrl}
+              inputName='roomId'
+              initialValue={{
+                id: studentData.roomId as number,
+                name: studentData.roomName as string
+              }}
+              key={`SelectRoom-${isLoading.toString()}`}
+            />
+
+            <SelectSiblings
+              siblings={studentData.siblings as []}
+              setStudentData={setStudentData}
+              apiUrl={apiUrl}
+              key={`SelectSiblings-${isLoading.toString()}`}
+            />
+
+            <SiblingsList
+              siblings={studentData.siblings as []}
+              setStudentData={setStudentData}
+            />
+
+            <ImageUploader
+              setStudentData={setStudentData}
+              key={`SelectImage-${isLoading.toString()}`}
+            />
+
+            <Grid item>
+              <Button
+                variant='contained'
+                color='primary'
+                type='submit'
+                disabled={isLoading}>
+                {isLoading ? 'Cargando...' : 'Submit'}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      )}
 
       <>{Snackbar}</>
     </RootContainer>

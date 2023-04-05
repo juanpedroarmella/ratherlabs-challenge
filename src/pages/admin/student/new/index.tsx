@@ -12,8 +12,7 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import type { GetServerSideProps, NextPage } from 'next/types'
-import type { ChangeEvent, FormEvent } from 'react'
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 
 interface PageProps {
   apiUrl: string
@@ -106,8 +105,7 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
               name='gender'
               value={studentData.gender}
               onChange={handleChange}
-              required
-            >
+              required>
               <MenuItem value='male'>Male</MenuItem>
               <MenuItem value='female'>Female</MenuItem>
               <MenuItem value='other'>Other</MenuItem>
@@ -118,12 +116,14 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
             apiUrl={apiUrl}
             handleChange={handleChange}
             inputName='roomId'
+            key={`SelectRoom-${isLoading.toString()}`}
           />
 
           <SelectSiblings
             apiUrl={apiUrl}
             setStudentData={setStudentData}
             siblings={studentData.siblings}
+            key={`SelectSiblings-${isLoading.toString()}`}
           />
 
           <SiblingsList
@@ -131,15 +131,17 @@ const NewStudent: NextPage<PageProps> = ({ apiUrl }) => {
             setStudentData={setStudentData}
           />
 
-          <ImageUploader setStudentData={setStudentData} />
+          <ImageUploader
+            setStudentData={setStudentData}
+            key={`SelectImage-${isLoading.toString()}`}
+          />
 
           <Grid item>
             <Button
               variant='contained'
               color='primary'
               type='submit'
-              disabled={isLoading}
-            >
+              disabled={isLoading}>
               {isLoading ? 'Loading...' : 'Submit'}
             </Button>
           </Grid>
